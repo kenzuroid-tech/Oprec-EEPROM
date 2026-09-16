@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup Admin — Polinema Robotics EEPROM</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .setup-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .setup-card {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(8, 8, 24, 0.95);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 40px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 60px rgba(0, 200, 255, 0.08);
+    }
+
+    .setup-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #f59e0b;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+
+    .admin-list {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 0.85rem;
+    }
+
+    .admin-item-email {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .admin-item-badge {
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: #f59e0b;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="setup-page">
+    <div class="setup-card">
+      <div style="text-align: center; margin-bottom: 28px;">
+        <div style="font-size: 48px; margin-bottom: 12px;">⚙️</div>
+        <div class="setup-badge">🔧 SETUP MODE</div>
+        <h1 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;">Buat Akun Admin</h1>
+        <p style="color: var(--text-secondary); font-size: 0.87rem;">
+          Buat akun admin untuk mengakses panel admin Polinema Robotics EEPROM.
+        </p>
+      </div>
+
+      <div class="warning-box">
+        <span>⚠️</span>
+        <div>Halaman ini hanya digunakan sekali untuk setup awal. Setelah membuat admin, simpan email & password dengan aman.</div>
+      </div>
+
+      <!-- Form Tambah Admin -->
+      <form id="form-setup">
+        <div class="form-group">
+          <label class="form-label" for="setup-email">Email Admin</label>
+          <input type="email" id="setup-email" class="form-input" placeholder="admin@polinema.ac.id" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="setup-name">Nama Admin</label>
+          <input type="text" id="setup-name" class="form-input" placeholder="Nama lengkap admin" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="setup-pass">Password</label>
+          <input type="password" id="setup-pass" class="form-input" placeholder="Min. 8 karakter" required minlength="8" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="setup-pass2">Konfirmasi Password</label>
+          <input type="password" id="setup-pass2" class="form-input" placeholder="Ulangi password" required minlength="8" />
+        </div>
+
+        <div id="setup-error" style="display:none; background: var(--error-dim); border: 1px solid var(--error); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 0.85rem; color: var(--error); margin-bottom: 16px;"></div>
+        <div id="setup-success" style="display:none; background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 0.85rem; color: #10b981; margin-bottom: 16px;"></div>
+
+        <button type="submit" class="btn btn-primary w-full" id="btn-setup">
+          ➕ Buat Akun Admin
+        </button>
+      </form>
+
+      <div class="divider" style="margin: 24px 0;"></div>
+
+      <!-- Daftar Admin yang sudah ada -->
+      <div>
+        <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px;">
+          Admin Terdaftar di Firestore
+        </div>
+        <div id="admin-list">
+          <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 16px;">Memuat...</div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 28px;">
+        <a href="login.html" style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">
+          → Pergi ke Halaman Login Admin
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createAdminUser, getCollection, setDocument, onAdminAuthStateChanged } from '../js/firebase-config.js';
+    import { setButtonLoading, showToast } from '../js/utils.js';
+
+    // Load daftar admin dari Firestore
+    async function loadAdmins() {
+      try {
+        const admins = await getCollection('admins');
+        const listEl = document.getElementById('admin-list');
+        if (admins.length === 0) {
+          listEl.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 16px;">Belum ada admin terdaftar.</div>`;
+          return;
+        }
+        listEl.innerHTML = `<div class="admin-list">` +
+          admins.map(a => `
+            <div class="admin-item">
+              <div>
+                <div class="admin-item-email">${a.email || a.id}</div>
+                ${a.nama ? `<div style="font-size:0.78rem; color: var(--text-muted);">${a.nama}</div>` : ''}
+              </div>
+              <span class="admin-item-badge">Admin</span>
+            </div>
+          `).join('') +
+        `</div>`;
+      } catch (err) {
+        document.getElementById('admin-list').innerHTML =
+          `<div style="color: var(--text-muted); font-size: 0.82rem; padding: 8px;">Gagal memuat daftar admin.</div>`;
+      }
+    }
+
+    loadAdmins();
+
+    // Handle form submit
+    document.getElementById('form-setup').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('setup-email').value.trim();
+      const nama  = document.getElementById('setup-name').value.trim();
+      const pass  = document.getElementById('setup-pass').value;
+      const pass2 = document.getElementById('setup-pass2').value;
+      const btn   = document.getElementById('btn-setup');
+      const errEl = document.getElementById('setup-error');
+      const okEl  = document.getElementById('setup-success');
+
+      errEl.style.display = 'none';
+      okEl.style.display  = 'none';
+
+      if (pass !== pass2) {
+        errEl.textContent = 'Password tidak sama!';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      setButtonLoading(btn, true);
+      try {
+        // Buat akun di Firebase Auth
+        const userCred = await createAdminUser(email, pass);
+        const uid = userCred.user.uid;
+
+        // Simpan data admin ke Firestore collection 'admins'
+        await setDocument('admins', uid, { email, nama, role: 'admin' }, false);
+
+        okEl.textContent = `✅ Akun admin "${email}" berhasil dibuat! Kamu sekarang bisa login.`;
+        okEl.style.display = 'block';
+        document.getElementById('form-setup').reset();
+        showToast('Akun admin berhasil dibuat!', 'success');
+        loadAdmins();
+      } catch (err) {
+        let msg = 'Gagal membuat akun: ' + err.message;
+        if (err.code === 'auth/email-already-in-use') msg = 'Email ini sudah digunakan oleh akun lain.';
+        if (err.code === 'auth/weak-password') msg = 'Password terlalu lemah. Gunakan minimal 8 karakter.';
+        if (err.code === 'auth/invalid-email') msg = 'Format email tidak valid.';
+        errEl.textContent = msg;
+        errEl.style.display = 'block';
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    });
+  </script>
+</body>
+</html>

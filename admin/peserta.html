@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Peserta — Admin Polinema Robotics</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-logo">
+          <div class="sidebar-logo-icon">🤖</div>
+          <div>
+            <div class="sidebar-logo-text">Polinema Robotics</div>
+            <div class="sidebar-logo-sub">Admin Panel</div>
+          </div>
+        </a>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="sidebar-user-name" id="admin-name">Admin</div>
+          <div class="sidebar-user-role">Admin</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Utama</div>
+        <a href="dashboard.html" class="sidebar-link"><span class="sidebar-link-icon">📊</span> Dashboard</a>
+        <a href="peserta.html" class="sidebar-link active"><span class="sidebar-link-icon">👥</span> Peserta</a>
+        <div class="sidebar-section-label">Rekrutmen</div>
+        <a href="soal.html" class="sidebar-link"><span class="sidebar-link-icon">✏️</span> Soal Tes</a>
+        <a href="wawancara.html" class="sidebar-link"><span class="sidebar-link-icon">🎤</span> Wawancara</a>
+        <div class="sidebar-section-label">Pengaturan</div>
+        <a href="anggota.html" class="sidebar-link"><span class="sidebar-link-icon">⚙️</span> Akun Anggota</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button onclick="logout()" class="btn btn-ghost w-full btn-sm">🚪 Keluar</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div>
+          <div class="admin-header-title">Manajemen Peserta</div>
+          <div class="admin-header-subtitle">Kelola dan pantau semua peserta rekrutmen</div>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="search-input-wrapper">
+            <span class="icon">🔍</span>
+            <input type="text" id="search-input" class="form-input search-input" placeholder="Cari nama, NIM, atau prodi..." oninput="filterPeserta()" />
+          </div>
+          <select id="filter-status" class="form-select" style="width: auto;" onchange="filterPeserta()">
+            <option value="">Semua Status</option>
+            <option value="daftar">Terdaftar</option>
+            <option value="tes_tulis">Tes Tulis</option>
+            <option value="menunggu_penilaian">Menunggu Penilaian</option>
+            <option value="wawancara">Wawancara</option>
+            <option value="diterima">Diterima</option>
+            <option value="ditolak">Ditolak</option>
+          </select>
+          <select id="filter-divisi" class="form-select" style="width: auto;" onchange="filterPeserta()">
+            <option value="">Semua Divisi</option>
+            <option value="Aburobonema (KRAI)">KRAI</option>
+            <option value="Aroc-PL (KRSBI)">KRSBI</option>
+            <option value="Robosarema (KRSRI)">KRSRI</option>
+          </select>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nama</th>
+                <th>NIM</th>
+                <th>Prodi</th>
+                <th>Smt</th>
+                <th>Divisi Pilihan</th>
+                <th>Skor Tes</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="peserta-tbody">
+              <tr><td colspan="9" style="text-align:center; color: var(--text-muted); padding: 40px;">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="table-info" style="text-align: center; margin-top: 12px; font-size: 0.82rem; color: var(--text-secondary);"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="modal-detail">
+    <div class="modal" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detail-title">Detail Peserta</h3>
+        <button class="modal-close" onclick="closeDetail()">✕</button>
+      </div>
+      <div id="detail-body"></div>
+    </div>
+  </div>
+
+  <!-- Status Change Modal -->
+  <div class="modal-overlay" id="modal-status">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Ubah Status Peserta</h3>
+        <button class="modal-close" onclick="closeStatusModal()">✕</button>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 16px;">Ubah status untuk: <strong id="status-modal-name"></strong></p>
+        <div class="form-group">
+          <label class="form-label">Status Baru</label>
+          <select id="new-status" class="form-select">
+            <option value="daftar">Terdaftar</option>
+            <option value="tes_tulis">Buka Tes Tulis</option>
+            <option value="wawancara">Lanjut Wawancara</option>
+            <option value="diterima">Diterima</option>
+            <option value="ditolak">Ditolak</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-ghost w-full" onclick="closeStatusModal()">Batal</button>
+        <button class="btn btn-primary w-full" id="btn-save-status" onclick="saveStatus()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getCollection, updateDocument, deleteDocument, onAdminAuthStateChanged, adminLogout } from '../js/firebase-config.js';
+    import { showToast, getStatusLabel, formatDate, formatDateTime, setButtonLoading, exportToCSV, renderDivisiBadge } from '../js/utils.js';
+
+    let allPeserta = [];
+    let currentEditId = null;
+
+    onAdminAuthStateChanged(user => {
+      if (!user) window.location.href = 'login.html';
+      else {
+        document.getElementById('admin-name').textContent = user.email?.split('@')[0] || 'Admin';
+        document.getElementById('admin-avatar').textContent = (user.email?.charAt(0) || 'A').toUpperCase();
+        loadPeserta();
+      }
+    });
+
+    async function loadPeserta() {
+      try {
+        allPeserta = await getCollection('pendaftar', [], 'createdAt');
+        renderTable(allPeserta);
+      } catch (err) {
+        showToast('Gagal memuat peserta: ' + err.message, 'error');
+      }
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('peserta-tbody');
+      document.getElementById('table-info').textContent = `Menampilkan ${data.length} dari ${allPeserta.length} peserta`;
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: var(--text-muted); padding: 40px;">Tidak ada data</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map((p, i) => `
+        <tr>
+          <td style="color: var(--text-muted); font-size: 0.82rem; font-family: var(--font-mono);">${i+1}</td>
+          <td><strong style="font-size: 0.92rem;">${p.nama}</strong></td>
+          <td><span class="font-mono text-sm">${p.nim}</span></td>
+          <td style="color: var(--text-secondary); font-size: 0.82rem; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.prodi}</td>
+          <td style="text-align: center;">${p.semester}</td>
+          <td>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              ${(p.divisiPilihan || []).map(d => `<span class="badge badge-muted" style="font-size: 0.65rem;">${d.split(' ')[0]}</span>`).join('')}
+            </div>
+          </td>
+          <td style="font-family: var(--font-mono); font-size: 0.85rem;">
+            ${p.skorTes !== undefined ? `${p.skorTes}%` : '<span style="color:var(--text-muted)">-</span>'}
+          </td>
+          <td><span class="badge status-${p.status}">${getStatusLabel(p.status)}</span></td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-ghost btn-sm" onclick="showDetail('${p.id}')">👁</button>
+              <button class="btn btn-ghost btn-sm" onclick="openStatusModal('${p.id}', '${p.nama}', '${p.status}')">✏️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.filterPeserta = function() {
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const status = document.getElementById('filter-status').value;
+      const divisi = document.getElementById('filter-divisi').value;
+
+      const filtered = allPeserta.filter(p => {
+        const matchSearch = !search ||
+          p.nama?.toLowerCase().includes(search) ||
+          p.nim?.includes(search) ||
+          p.prodi?.toLowerCase().includes(search);
+        const matchStatus = !status || p.status === status;
+        const matchDivisi = !divisi || p.divisiPilihan?.includes(divisi);
+        return matchSearch && matchStatus && matchDivisi;
+      });
+      renderTable(filtered);
+    };
+
+    let currentHasilTesId = null;
+
+    window.showDetail = async function(id) {
+      const p = allPeserta.find(x => x.id === id);
+      if (!p) return;
+
+      document.getElementById('detail-title').textContent = `Detail — ${p.nama}`;
+      document.getElementById('detail-body').innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted);">⏳ Memuat...</div>`;
+      document.getElementById('modal-detail').classList.add('active');
+
+      // Load test result
+      let hasilTes = null;
+      currentHasilTesId = null;
+      try {
+        const tesResults = await getCollection('hasil_tes', [['nim', '==', p.nim]]);
+        if (tesResults.length > 0) {
+          hasilTes = tesResults[tesResults.length - 1];
+          currentHasilTesId = hasilTes.id;
+        }
+      } catch {}
+
+      // Load interview result
+      let hasilW = null;
+      try {
+        const wResults = await getCollection('wawancara', [['nim', '==', p.nim]]);
+        if (wResults.length > 0) hasilW = wResults[wResults.length - 1];
+      } catch {}
+
+      // Build essay grading section
+      let essaySection = '';
+      if (hasilTes) {
+        const pgPct = hasilTes.skorMaksimalPG > 0
+          ? Math.round((hasilTes.skorPG / hasilTes.skorMaksimalPG) * 100) : 0;
+
+        const essaySoal = (hasilTes.hasilSoal || []).filter(s => s.tipe === 'essay');
+
+        const essayHtml = essaySoal.length > 0 ? `
+          <div class="detail-section" style="margin-top:12px;">
+            <div class="detail-section-title" style="color:var(--secondary);">📝 Penilaian Essay</div>
+            ${essaySoal.map((s, i) => `
+              <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;margin-bottom:12px;">
+                <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:6px;">Essay ${i+1}</div>
+                <div style="font-size:0.88rem;font-weight:600;margin-bottom:8px;">${s.pertanyaan}</div>
+                <div style="font-size:0.85rem;color:var(--text-secondary);background:var(--bg-card);border-radius:var(--radius-sm);padding:10px;margin-bottom:10px;line-height:1.6;">
+                  ${s.jawaban ? s.jawaban.replace(/\n/g,'<br>') : '<em style="color:var(--text-muted)">Tidak dijawab</em>'}
+                </div>
+                ${s.modelJawaban ? `<div style="font-size:0.78rem;color:var(--primary);margin-bottom:8px;">📌 Model jawaban: ${s.modelJawaban}</div>` : ''}
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <label style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">Skor (0–10):</label>
+                  <input type="number" id="essay-score-${i}" class="form-input" style="width:80px;padding:6px 10px;"
+                    value="${s.skor ?? ''}" min="0" max="10" placeholder="-" />
+                </div>
+              </div>
+            `).join('')}
+            <button class="btn btn-primary w-full" onclick="saveEssayScores('${p.id}', '${p.nim}')">
+              💾 Simpan Nilai Essay
+            </button>
+          </div>` : `
+          <div class="detail-section">
+            <div class="detail-section-title">📊 Hasil Tes Tulis</div>
+            <div style="display:flex;gap:16px;">
+              <div><div class="detail-label">Skor PG</div>
+                <div class="detail-value" style="color:var(--primary);font-family:var(--font-mono);">
+                  ${hasilTes.skorPG} / ${hasilTes.skorMaksimalPG} (${pgPct}%)
+                </div>
+              </div>
+              <div><div class="detail-label">Essay</div>
+                <div class="detail-value" style="color:var(--warning);">Tidak ada soal essay</div>
+              </div>
+            </div>
+          </div>`;
+        essaySection = `
+          <div class="detail-section">
+            <div class="detail-section-title">📊 Hasil Tes Tulis</div>
+            <div style="display:flex;gap:16px;margin-bottom:8px;">
+              <div><div class="detail-label">Skor PG</div>
+                <div class="detail-value" style="color:var(--primary);font-family:var(--font-mono);">
+                  ${hasilTes.skorPG ?? '-'} / ${hasilTes.skorMaksimalPG ?? '-'} (${pgPct}%)
+                </div>
+              </div>
+              <div><div class="detail-label">Status Penilaian</div>
+                <div class="detail-value" style="color:${hasilTes.statusPenilaian==='selesai'?'var(--success)':'var(--warning)'}">
+                  ${hasilTes.statusPenilaian === 'selesai' ? '✅ Selesai' : '⏳ Menunggu'}
+                </div>
+              </div>
+            </div>
+          </div>
+          ${essaySoal.length > 0 ? essayHtml : ''}`;
+      }
+
+      document.getElementById('detail-body').innerHTML = `
+        <div class="detail-section">
+          <div class="detail-section-title">Data Diri</div>
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">NIM</div><div class="detail-value font-mono">${p.nim}</div></div>
+            <div class="detail-item"><div class="detail-label">Prodi</div><div class="detail-value">${p.prodi || '-'}</div></div>
+            <div class="detail-item"><div class="detail-label">No. HP</div><div class="detail-value">${p.noHp || '-'}</div></div>
+            <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">${p.email || '-'}</div></div>
+            ${p.pendidikan ? `<div class="detail-item"><div class="detail-label">Pendidikan</div><div class="detail-value">${p.pendidikan}</div></div>` : ''}
+            ${p.angkatan ? `<div class="detail-item"><div class="detail-label">Kelas</div><div class="detail-value">${p.angkatan}</div></div>` : ''}
+          </div>
+        </div>
+
+        ${p.prestasi ? `
+        <div class="detail-section">
+          <div class="detail-section-title">Prestasi</div>
+          <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6;">${p.prestasi}</p>
+        </div>` : ''}
+
+        ${hasilTes ? essaySection : `
+        <div class="detail-section">
+          <div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:12px;">Belum mengerjakan tes.</div>
+        </div>`}
+
+        ${hasilW ? `
+        <div class="detail-section">
+          <div class="detail-section-title">Hasil Wawancara</div>
+          <div class="ai-resume" style="margin-top:0;">
+            <p class="ai-resume-text" style="font-size:0.82rem;">${hasilW.catatan || hasilW.resumeAI || '-'}</p>
+            <div class="ai-recommendation ${hasilW.rekomendasi==='diterima'?'lanjut':'tidak'}" style="margin-top:10px;">
+              ${hasilW.rekomendasi==='diterima' ? '✅ Rekomendasi: DITERIMA' : '❌ Rekomendasi: DITOLAK'}
+            </div>
+          </div>
+        </div>` : ''}
+
+        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" style="flex:1;" onclick="openStatusModal('${p.id}', '${p.nama}', '${p.status}')">
+            ✏️ Ubah Status
+          </button>
+          ${hasilTes ? `
+          <button class="btn btn-ghost" style="flex:1;color:var(--error);border-color:var(--error);" onclick="resetTest('${p.id}', '${p.nim}', '${p.nama}')">
+            🔄 Reset Tes
+          </button>` : ''}
+          ${p.status === 'wawancara' ? `<a href="wawancara.html?nim=${p.nim}" class="btn btn-primary" style="flex:1;">🎤 Wawancara</a>` : ''}
+        </div>
+      `;
+    };
+
+    window.closeDetail = () => document.getElementById('modal-detail').classList.remove('active');
+
+    window.openStatusModal = function(id, nama, currentStatus) {
+      currentEditId = id;
+      document.getElementById('status-modal-name').textContent = nama;
+      document.getElementById('new-status').value = currentStatus;
+      document.getElementById('modal-detail').classList.remove('active');
+      document.getElementById('modal-status').classList.add('active');
+    };
+
+    window.closeStatusModal = () => document.getElementById('modal-status').classList.remove('active');
+
+    window.saveStatus = async function() {
+      if (!currentEditId) return;
+      const newStatus = document.getElementById('new-status').value;
+      const btn = document.getElementById('btn-save-status');
+      setButtonLoading(btn, true);
+      try {
+        await updateDocument('pendaftar', currentEditId, { status: newStatus });
+        const idx = allPeserta.findIndex(p => p.id === currentEditId);
+        if (idx !== -1) allPeserta[idx].status = newStatus;
+        renderTable(allPeserta);
+        closeStatusModal();
+        showToast('Status berhasil diperbarui!', 'success');
+      } catch (err) {
+        showToast('Gagal memperbarui: ' + err.message, 'error');
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    };
+
+    window.saveEssayScores = async function(pesertaId, nim) {
+      if (!currentHasilTesId) { showToast('Data tes tidak ditemukan', 'error'); return; }
+      try {
+        const hasilTesData = await getCollection('hasil_tes', [['nim', '==', nim]]);
+        if (!hasilTesData.length) { showToast('Data tes tidak ditemukan', 'error'); return; }
+
+        const ht = hasilTesData[hasilTesData.length - 1];
+        const hasilSoal = [...(ht.hasilSoal || [])];
+        let essayIdx = 0;
+        let totalEssay = 0;
+        let maxEssay = 0;
+
+        hasilSoal.forEach((s, i) => {
+          if (s.tipe === 'essay') {
+            const input = document.getElementById(`essay-score-${essayIdx}`);
+            const val = input ? parseInt(input.value) || 0 : (s.skor || 0);
+            hasilSoal[i] = { ...s, skor: Math.min(10, Math.max(0, val)) };
+            totalEssay += hasilSoal[i].skor;
+            maxEssay += 10;
+            essayIdx++;
+          }
+        });
+
+        await updateDocument('hasil_tes', ht.id, {
+          hasilSoal,
+          skorEssay: totalEssay,
+          skorMaksimalEssay: maxEssay,
+          statusPenilaian: 'selesai'
+        });
+
+        // Update skorTes di pendaftar
+        const totalMax = (ht.skorMaksimalPG || 0) + maxEssay;
+        const totalScore = (ht.skorPG || 0) + totalEssay;
+        const pct = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+        await updateDocument('pendaftar', pesertaId, { skorTes: pct });
+
+        showToast('Nilai essay berhasil disimpan! ✅', 'success');
+        closeDetail();
+        await loadPeserta();
+      } catch (err) {
+        showToast('Gagal simpan: ' + err.message, 'error');
+      }
+    };
+
+    window.resetTest = async function(pesertaId, nim, nama) {
+      if (!confirm(`Reset tes untuk ${nama}?\n\nIni akan menghapus hasil tes dan mengembalikan status ke "Tes Tulis" agar peserta bisa mengulang.`)) return;
+      try {
+        // Hapus semua hasil_tes untuk nim ini
+        const hasilList = await getCollection('hasil_tes', [['nim', '==', nim]]);
+        for (const h of hasilList) {
+          await deleteDocument('hasil_tes', h.id);
+        }
+        // Reset status & skor
+        await updateDocument('pendaftar', pesertaId, {
+          status: 'tes_tulis',
+          skorPG: null,
+          skorTes: null
+        });
+        const idx = allPeserta.findIndex(p => p.id === pesertaId);
+        if (idx !== -1) { allPeserta[idx].status = 'tes_tulis'; allPeserta[idx].skorTes = null; }
+        renderTable(allPeserta);
+        closeDetail();
+        showToast(`✅ Tes ${nama} berhasil direset. Peserta bisa mengulang.`, 'success');
+      } catch (err) {
+        showToast('Gagal reset: ' + err.message, 'error');
+      }
+    };
+
+    window.exportCSV = function() {
+      const data = allPeserta.map(p => ({
+        Nama: p.nama,
+        NIM: p.nim,
+        Prodi: p.prodi,
+        Semester: p.semester,
+        Email: p.email,
+        NoHP: p.noHp,
+        Divisi1: p.divisiPilihan?.[0] || '',
+        Divisi2: p.divisiPilihan?.[1] || '',
+        SkorTes: p.skorTes || '',
+        Status: getStatusLabel(p.status)
+      }));
+      exportToCSV(data, 'peserta-oprec-polinema-robotics.csv');
+    };
+
+    window.logout = async () => {
+      const { adminLogout: al } = await import('../js/firebase-config.js');
+      await al();
+      window.location.href = 'login.html';
+    };
+  </script>
+</body>
+</html>

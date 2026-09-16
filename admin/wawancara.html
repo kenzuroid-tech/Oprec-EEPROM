@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wawancara — Admin Polinema Robotics</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+
+  <div class="admin-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-logo">
+          <div class="sidebar-logo-icon">🤖</div>
+          <div><div class="sidebar-logo-text">Polinema Robotics</div><div class="sidebar-logo-sub">Admin Panel</div></div>
+        </a>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="admin-avatar">A</div>
+        <div><div class="sidebar-user-name" id="admin-name">Admin</div><div class="sidebar-user-role">Admin</div></div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Utama</div>
+        <a href="dashboard.html" class="sidebar-link"><span class="sidebar-link-icon">📊</span> Dashboard</a>
+        <a href="peserta.html" class="sidebar-link"><span class="sidebar-link-icon">👥</span> Peserta</a>
+        <div class="sidebar-section-label">Rekrutmen</div>
+        <a href="soal.html" class="sidebar-link"><span class="sidebar-link-icon">✏️</span> Soal Tes</a>
+        <a href="wawancara.html" class="sidebar-link active"><span class="sidebar-link-icon">🎤</span> Wawancara</a>
+        <div class="sidebar-section-label">Pengaturan</div>
+        <a href="anggota.html" class="sidebar-link"><span class="sidebar-link-icon">⚙️</span> Akun Anggota</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button onclick="logout()" class="btn btn-ghost w-full btn-sm">🚪 Keluar</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <div>
+          <div class="admin-header-title">Manajemen Wawancara</div>
+          <div class="admin-header-subtitle">Kelola pertanyaan wawancara dan proses sesi wawancara</div>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-ghost btn-sm" onclick="showTab('pertanyaan')">📋 Pertanyaan</button>
+          <button class="btn btn-primary btn-sm" onclick="showTab('sesi')">🎤 Mulai Sesi</button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <!-- Tabs -->
+        <div style="display: flex; gap: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 4px; margin-bottom: 24px; width: fit-content;">
+          <button id="tab-pertanyaan" class="btn btn-primary btn-sm" onclick="showTab('pertanyaan')" style="border-radius: 8px;">📋 Pertanyaan</button>
+          <button id="tab-sesi" class="btn btn-ghost btn-sm" onclick="showTab('sesi')" style="border-radius: 8px;">🎤 Sesi Wawancara</button>
+          <button id="tab-hasil" class="btn btn-ghost btn-sm" onclick="showTab('hasil')" style="border-radius: 8px;">📊 Hasil Wawancara</button>
+        </div>
+
+        <!-- ── TAB 1: PERTANYAAN ─────────────────── -->
+        <div id="panel-pertanyaan">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-weight: 700;">Daftar Pertanyaan Wawancara</h3>
+            <button class="btn btn-primary" onclick="openPertanyaanModal()">+ Tambah Pertanyaan</button>
+          </div>
+          <div id="pertanyaan-list">
+            <div style="text-align:center; color: var(--text-muted); padding: 40px;">Memuat...</div>
+          </div>
+        </div>
+
+        <!-- ── TAB 2: SESI WAWANCARA ─────────────── -->
+        <div id="panel-sesi" style="display: none;">
+          <div class="grid-2" style="margin-bottom: 24px;">
+            <div class="card">
+              <h3 style="font-weight: 700; margin-bottom: 16px;">Pilih Peserta</h3>
+              <div class="form-group">
+                <label class="form-label">Peserta yang Akan Diwawancara</label>
+                <select id="select-peserta" class="form-select" onchange="onPesertaSelect()">
+                  <option value="">Pilih peserta...</option>
+                </select>
+              </div>
+              <div id="peserta-info-card" style="display: none; margin-top: 12px; padding: 14px; background: var(--bg-input); border-radius: var(--radius-md);">
+                <div style="font-weight: 700;" id="peserta-card-nama"></div>
+                <div style="font-size: 0.82rem; color: var(--text-secondary);" id="peserta-card-info"></div>
+                <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;" id="peserta-card-divisi"></div>
+                <div class="ai-resume" style="margin-top: 12px;" id="peserta-tes-resume" style="display:none;"></div>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="font-weight: 700; margin-bottom: 16px;">Informasi Pewawancara</h3>
+              <div class="form-group">
+                <label class="form-label">Nama Pewawancara</label>
+                <input type="text" id="pewawancara-nama" class="form-input" placeholder="Nama anggota yang mewawancara" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Divisi Pewawancara</label>
+                <select id="pewawancara-divisi" class="form-select">
+                  <option value="">Pilih divisi...</option>
+                  <option value="Aburobonema (KRAI)">Aburobonema (KRAI)</option>
+                  <option value="Aroc-PL (KRSBI)">Aroc-PL (KRSBI)</option>
+                  <option value="Robosarema (KRSRI)">Robosarema (KRSRI)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interview Questions -->
+          <div id="interview-questions-panel" style="display: none;">
+            <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--primary-dim);">
+              🎤 Pertanyaan & Jawaban
+            </div>
+            <div id="interview-questions-list"></div>
+            <div style="text-align: center; margin-top: 24px;">
+              <button class="btn btn-primary btn-lg" id="btn-submit-interview" onclick="submitInterview()">
+                🤖 Selesai & Generate Resume AI
+              </button>
+            </div>
+          </div>
+
+          <div id="start-interview-btn-wrap" style="display: none; text-align: center; margin-top: 20px;">
+            <button class="btn btn-secondary btn-lg" onclick="loadInterviewQuestions()">
+              🚀 Mulai Sesi Wawancara
+            </button>
+          </div>
+        </div>
+
+        <!-- ── TAB 3: HASIL ──────────────────────── -->
+        <div id="panel-hasil" style="display: none;">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Peserta</th>
+                  <th>NIM</th>
+                  <th>Pewawancara</th>
+                  <th>Rekomendasi AI</th>
+                  <th>Divisi</th>
+                  <th>Tanggal</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody id="hasil-tbody">
+                <tr><td colspan="7" style="text-align:center; color: var(--text-muted); padding: 40px;">Memuat...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- AI Processing Modal -->
+  <div class="modal-overlay" id="modal-ai-process">
+    <div class="modal" style="max-width: 480px; text-align: center;">
+      <div style="width: 72px; height: 72px; border: 4px solid var(--border); border-top-color: var(--primary); border-right-color: var(--secondary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 24px;"></div>
+      <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">AI Sedang Menganalisis</h3>
+      <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 16px;" id="ai-proc-text">Memproses jawaban wawancara...</p>
+      <div style="background: var(--bg-card); border-radius: var(--radius-md); padding: 12px; font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-secondary); text-align: left;" id="ai-proc-log">></div>
+    </div>
+  </div>
+
+  <!-- Interview Result Modal -->
+  <div class="modal-overlay" id="modal-interview-result">
+    <div class="modal" style="max-width: 640px; max-height: 85vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title">🤖 Hasil Analisis AI Wawancara</h3>
+        <button class="modal-close" onclick="document.getElementById('modal-interview-result').classList.remove('active')">✕</button>
+      </div>
+      <div id="interview-result-body"></div>
+    </div>
+  </div>
+
+  <!-- Pertanyaan Modal -->
+  <div class="modal-overlay" id="modal-pertanyaan">
+    <div class="modal" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-pq-title">Tambah Pertanyaan</h3>
+        <button class="modal-close" onclick="closePertanyaanModal()">✕</button>
+      </div>
+      <form id="pertanyaan-form">
+        <div class="form-group">
+          <label class="form-label">Pertanyaan *</label>
+          <textarea id="pq-text" class="form-textarea" placeholder="Tulis pertanyaan wawancara..." required style="min-height: 120px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategori</label>
+          <select id="pq-kategori" class="form-select">
+            <option value="umum">Umum (Semua Divisi)</option>
+            <option value="Aburobonema (KRAI)">Aburobonema (KRAI)</option>
+            <option value="Aroc-PL (KRSBI)">Aroc-PL (KRSBI)</option>
+            <option value="Robosarema (KRSRI)">Robosarema (KRSRI)</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-ghost w-full" onclick="closePertanyaanModal()">Batal</button>
+          <button type="submit" class="btn btn-primary w-full">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Detail Hasil Modal -->
+  <div class="modal-overlay" id="modal-detail-hasil">
+    <div class="modal" style="max-width: 600px; max-height: 85vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title">Detail Hasil Wawancara</h3>
+        <button class="modal-close" onclick="document.getElementById('modal-detail-hasil').classList.remove('active')">✕</button>
+      </div>
+      <div id="detail-hasil-body"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getCollection, addDocument, deleteDocument, onAdminAuthStateChanged, updateDocument } from '../js/firebase-config.js';
+    import { generateResumeWawancara } from '../js/ai.js';
+    import { showToast, setButtonLoading, formatDateTime, getStatusLabel } from '../js/utils.js';
+
+    let allPertanyaan = [];
+    let allPeserta = [];
+    let selectedPeserta = null;
+    let interviewAnswers = {};
+    let currentAdminName = '';
+    let currentAdminEmail = '';
+
+    onAdminAuthStateChanged(user => {
+      if (!user) window.location.href = 'login.html';
+      else {
+        currentAdminEmail = user.email || '';
+        currentAdminName = user.email?.split('@')[0] || 'Admin';
+        document.getElementById('admin-name').textContent = currentAdminName;
+        document.getElementById('admin-avatar').textContent = (user.email?.charAt(0) || 'A').toUpperCase();
+        init();
+      }
+    });
+
+    async function init() {
+      await Promise.all([loadPertanyaan(), loadPeserta(), loadHasil()]);
+    }
+
+    // ── Pertanyaan ──────────────────────────────
+    async function loadPertanyaan() {
+      allPertanyaan = await getCollection('pertanyaan_wawancara', [], 'createdAt');
+      renderPertanyaan();
+    }
+
+    function renderPertanyaan() {
+      const el = document.getElementById('pertanyaan-list');
+      if (!allPertanyaan.length) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">Belum ada pertanyaan</div></div>`;
+        return;
+      }
+      el.innerHTML = allPertanyaan.map((p, i) => `
+        <div class="soal-item">
+          <div class="soal-header">
+            <div>
+              <div class="soal-number">Pertanyaan ${i+1} · ${p.kategori === 'umum' ? '🌐 Umum' : p.kategori}</div>
+              <div class="soal-text">${p.pertanyaan}</div>
+            </div>
+            <div class="soal-actions">
+              <button class="btn btn-danger btn-sm" onclick="deletePertanyaan('${p.id}')">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.openPertanyaanModal = function() {
+      document.getElementById('pertanyaan-form').reset();
+      document.getElementById('modal-pertanyaan').classList.add('active');
+    };
+    window.closePertanyaanModal = () => document.getElementById('modal-pertanyaan').classList.remove('active');
+
+    document.getElementById('pertanyaan-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await addDocument('pertanyaan_wawancara', {
+          pertanyaan: document.getElementById('pq-text').value.trim(),
+          kategori: document.getElementById('pq-kategori').value
+        });
+        showToast('Pertanyaan ditambahkan!', 'success');
+        closePertanyaanModal();
+        await loadPertanyaan();
+      } catch (err) {
+        showToast('Gagal: ' + err.message, 'error');
+      }
+    });
+
+    window.deletePertanyaan = async function(id) {
+      if (!confirm('Hapus pertanyaan ini?')) return;
+      await deleteDocument('pertanyaan_wawancara', id);
+      showToast('Pertanyaan dihapus.', 'success');
+      await loadPertanyaan();
+    };
+
+    // ── Peserta ──────────────────────────────────
+    async function loadPeserta() {
+      allPeserta = await getCollection('pendaftar', [['status', '==', 'wawancara']]);
+      const select = document.getElementById('select-peserta');
+      select.innerHTML = `<option value="">Pilih peserta...</option>` +
+        allPeserta.map(p => `<option value="${p.id}">${p.nama} — ${p.nim}</option>`).join('');
+    }
+
+    window.onPesertaSelect = function() {
+      const id = document.getElementById('select-peserta').value;
+      selectedPeserta = allPeserta.find(p => p.id === id) || null;
+
+      const infoCard = document.getElementById('peserta-info-card');
+      const startBtn = document.getElementById('start-interview-btn-wrap');
+
+      if (!selectedPeserta) {
+        infoCard.style.display = 'none';
+        startBtn.style.display = 'none';
+        document.getElementById('interview-questions-panel').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('peserta-card-nama').textContent = selectedPeserta.nama;
+      document.getElementById('peserta-card-info').textContent = `${selectedPeserta.nim} · ${selectedPeserta.prodi} · Smt ${selectedPeserta.semester}`;
+      document.getElementById('peserta-card-divisi').innerHTML =
+        (selectedPeserta.divisiPilihan || []).map((d, i) => `<span class="badge badge-primary">Pilihan ${i+1}: ${d}</span>`).join('');
+
+      const resumeEl = document.getElementById('peserta-tes-resume');
+      if (selectedPeserta.resumeTes) {
+        resumeEl.innerHTML = `<p class="ai-resume-text" style="font-size: 0.8rem;">${selectedPeserta.resumeTes}</p>`;
+        resumeEl.style.display = 'block';
+      } else {
+        resumeEl.style.display = 'none';
+      }
+
+      infoCard.style.display = 'block';
+      startBtn.style.display = 'block';
+      document.getElementById('interview-questions-panel').style.display = 'none';
+      interviewAnswers = {};
+    };
+
+    window.loadInterviewQuestions = function() {
+      if (!selectedPeserta) { showToast('Pilih peserta dulu!', 'error'); return; }
+      const pewawancara = document.getElementById('pewawancara-nama').value.trim();
+      if (!pewawancara) { showToast('Isi nama pewawancara!', 'error'); return; }
+
+      const divisiPeserta = selectedPeserta.divisiPilihan || [];
+      const filteredQ = allPertanyaan.filter(q =>
+        q.kategori === 'umum' || divisiPeserta.includes(q.kategori)
+      );
+
+      if (!filteredQ.length) {
+        showToast('Belum ada pertanyaan wawancara. Tambah pertanyaan dulu!', 'warning');
+        return;
+      }
+
+      const panel = document.getElementById('interview-questions-panel');
+      const listEl = document.getElementById('interview-questions-list');
+      interviewAnswers = {};
+
+      listEl.innerHTML = filteredQ.map((q, i) => `
+        <div class="interview-question">
+          <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+            <div style="width: 28px; height: 28px; background: var(--primary-dim); border: 1px solid var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--primary); flex-shrink: 0; font-family: var(--font-mono);">${i+1}</div>
+            <div class="interview-question-text">${q.pertanyaan}</div>
+          </div>
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label class="form-label">Jawaban Peserta</label>
+            <textarea class="essay-textarea" id="ans-${i}" placeholder="Catat jawaban peserta..." oninput="saveAnswer(${i}, '${q.id}', '${escapeJs(q.pertanyaan)}')" style="min-height: 100px;"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Catatan Pewawancara (Opsional)</label>
+            <input type="text" class="form-input" id="note-${i}" placeholder="Catatan tambahan..." oninput="saveNote(${i})" />
+          </div>
+          <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Skor:</span>
+            <div class="interview-score">
+              ${[1,2,3,4,5,6,7,8,9,10].map(s => `<button type="button" class="score-btn" id="score-${i}-${s}" onclick="setScore(${i}, ${s})">${s}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      panel.style.display = 'block';
+      panel.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    function escapeJs(str) { return str.replace(/'/g, "\\'").replace(/"/g, '\\"'); }
+
+    window.saveAnswer = function(idx, qId, qText) {
+      if (!interviewAnswers[idx]) interviewAnswers[idx] = { pertanyaanId: qId, pertanyaan: qText };
+      interviewAnswers[idx].jawaban = document.getElementById(`ans-${idx}`)?.value || '';
+    };
+
+    window.saveNote = function(idx) {
+      if (!interviewAnswers[idx]) interviewAnswers[idx] = {};
+      interviewAnswers[idx].catatan = document.getElementById(`note-${idx}`)?.value || '';
+    };
+
+    window.setScore = function(idx, score) {
+      if (!interviewAnswers[idx]) interviewAnswers[idx] = {};
+      interviewAnswers[idx].skor = score;
+      document.querySelectorAll(`[id^="score-${idx}-"]`).forEach(btn => btn.classList.remove('selected'));
+      document.getElementById(`score-${idx}-${score}`)?.classList.add('selected');
+    };
+
+    window.submitInterview = async function() {
+      if (!selectedPeserta) { showToast('Pilih peserta!', 'error'); return; }
+      const pewawancara = document.getElementById('pewawancara-nama').value.trim();
+      if (!pewawancara) { showToast('Isi nama pewawancara!', 'error'); return; }
+
+      const hasilList = Object.values(interviewAnswers).filter(a => a.jawaban);
+      if (hasilList.length === 0) { showToast('Isi minimal 1 jawaban!', 'error'); return; }
+
+      document.getElementById('modal-ai-process').classList.add('active');
+      const setLog = (msg) => {
+        document.getElementById('ai-proc-log').innerHTML += `<br>> ${msg}`;
+        document.getElementById('ai-proc-text').textContent = msg;
+      };
+
+      try {
+        setLog('Mengambil data peserta...');
+        const pesertaData = {
+          ...selectedPeserta,
+          skorTes: selectedPeserta.skorTes ? `${selectedPeserta.skorTes}%` : 'Tidak ada',
+          resumeTes: selectedPeserta.resumeTes || 'Tidak ada'
+        };
+
+        setLog('Mengirim ke Gemini AI untuk analisis...');
+        const result = await generateResumeWawancara(pesertaData, hasilList, pewawancara);
+
+        setLog('Menyimpan ke database...');
+        const wawancaraData = {
+          nim: selectedPeserta.nim,
+          nama: selectedPeserta.nama,
+          pewawancara,
+          hasilJawaban: hasilList,
+          resumeAI: result.resume,
+          rekomendasi: result.rekomendasi,
+          divisiRekomendasi: result.divisiRekomendasi,
+          alasanAI: result.alasan
+        };
+
+        await addDocument('wawancara', wawancaraData);
+
+        // Update peserta status
+        const newStatus = result.rekomendasi === 'diterima' ? 'diterima' : 'ditolak';
+        await updateDocument('pendaftar', selectedPeserta.id, { status: newStatus });
+
+        setLog('Selesai! ✅');
+        document.getElementById('modal-ai-process').classList.remove('active');
+
+        // Show result
+        document.getElementById('interview-result-body').innerHTML = `
+          <div style="margin-bottom: 20px; padding: 16px; background: var(--bg-input); border-radius: var(--radius-lg);">
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">${selectedPeserta.nama}</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">${selectedPeserta.nim} · Pewawancara: ${pewawancara}</div>
+          </div>
+
+          <div class="ai-resume">
+            <p class="ai-resume-text">${result.resume}</p>
+          </div>
+
+          <div style="margin-top: 16px; padding: 16px; border-radius: var(--radius-lg); background: ${result.rekomendasi === 'diterima' ? 'var(--success-dim)' : 'var(--error-dim)'}; border: 1px solid ${result.rekomendasi === 'diterima' ? 'var(--success)' : 'var(--error)'};">
+            <div style="font-size: 1.2rem; font-weight: 800; color: ${result.rekomendasi === 'diterima' ? 'var(--success)' : 'var(--error)'}; margin-bottom: 4px;">
+              ${result.rekomendasi === 'diterima' ? '✅ DITERIMA' : '❌ DITOLAK'}
+            </div>
+            ${result.divisiRekomendasi ? `<div style="font-size: 0.88rem; font-weight: 600; margin-bottom: 8px;">Divisi Rekomendasi: ${result.divisiRekomendasi}</div>` : ''}
+            <div style="font-size: 0.85rem; opacity: 0.85;">${result.alasan}</div>
+          </div>
+
+          <div style="margin-top: 16px; font-size: 0.82rem; color: var(--success);">
+            ✅ Status peserta telah diperbarui menjadi "${getStatusLabel(newStatus)}"
+          </div>
+        `;
+
+        document.getElementById('modal-interview-result').classList.add('active');
+        await loadHasil();
+        await loadPeserta();
+
+      } catch (err) {
+        document.getElementById('modal-ai-process').classList.remove('active');
+        showToast('Gagal: ' + err.message, 'error');
+      }
+    };
+
+    // ── Hasil ──────────────────────────────────
+    async function loadHasil() {
+      try {
+        const hasil = await getCollection('wawancara', [], 'createdAt');
+        const tbody = document.getElementById('hasil-tbody');
+        if (!hasil.length) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted); padding: 32px;">Belum ada hasil wawancara</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = hasil.map(h => `
+          <tr>
+            <td><strong>${h.nama}</strong></td>
+            <td class="font-mono text-sm">${h.nim}</td>
+            <td style="color: var(--text-secondary);">${h.pewawancara}</td>
+            <td><span class="badge ${h.rekomendasi === 'diterima' ? 'badge-success' : 'badge-error'}">${h.rekomendasi === 'diterima' ? '✅ Diterima' : '❌ Ditolak'}</span></td>
+            <td style="font-size: 0.85rem;">${h.divisiRekomendasi || '—'}</td>
+            <td style="color: var(--text-secondary); font-size: 0.82rem;">${formatDateTime(h.createdAt)}</td>
+            <td><button class="btn btn-ghost btn-sm" onclick="showHasilDetail('${h.id}')">👁</button></td>
+          </tr>
+        `).join('');
+        allHasil = hasil;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    let allHasil = [];
+    window.showHasilDetail = function(id) {
+      const h = allHasil.find(x => x.id === id);
+      if (!h) return;
+      document.getElementById('detail-hasil-body').innerHTML = `
+        <div class="detail-section">
+          <div class="detail-section-title">Info Wawancara</div>
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Peserta</div><div class="detail-value">${h.nama}</div></div>
+            <div class="detail-item"><div class="detail-label">NIM</div><div class="detail-value font-mono">${h.nim}</div></div>
+            <div class="detail-item"><div class="detail-label">Pewawancara</div><div class="detail-value">${h.pewawancara}</div></div>
+            <div class="detail-item"><div class="detail-label">Tanggal</div><div class="detail-value">${formatDateTime(h.createdAt)}</div></div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Resume AI</div>
+          <div class="ai-resume"><p class="ai-resume-text">${h.resumeAI}</p></div>
+          <div class="ai-recommendation ${h.rekomendasi === 'diterima' ? 'lanjut' : 'tidak'}" style="margin-top: 12px;">
+            ${h.rekomendasi === 'diterima' ? `✅ DITERIMA — ${h.divisiRekomendasi}` : '❌ DITOLAK'}
+          </div>
+          <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary);">${h.alasanAI}</div>
+        </div>
+        ${h.hasilJawaban?.length ? `
+        <div class="detail-section">
+          <div class="detail-section-title">Jawaban Wawancara</div>
+          ${h.hasilJawaban.map((j, i) => `
+            <div style="margin-bottom: 16px; padding: 14px; background: var(--bg-input); border-radius: var(--radius-md);">
+              <div style="font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">${i+1}. ${j.pertanyaan}</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px;">${j.jawaban}</div>
+              ${j.catatan ? `<div style="font-size: 0.78rem; color: var(--text-muted);">Catatan: ${j.catatan}</div>` : ''}
+              ${j.skor ? `<div style="margin-top: 4px;"><span class="badge badge-primary">${j.skor}/10</span></div>` : ''}
+            </div>
+          `).join('')}
+        </div>` : ''}
+      `;
+      document.getElementById('modal-detail-hasil').classList.add('active');
+    };
+
+    // ── Tabs ─────────────────────────────────────
+    window.showTab = function(tab) {
+      ['pertanyaan', 'sesi', 'hasil'].forEach(t => {
+        document.getElementById(`panel-${t}`).style.display = t === tab ? 'block' : 'none';
+        const btn = document.getElementById(`tab-${t}`);
+        btn.className = t === tab ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
+        btn.style.borderRadius = '8px';
+      });
+    };
+
+    window.logout = async () => {
+      const { adminLogout } = await import('../js/firebase-config.js');
+      await adminLogout();
+      window.location.href = 'login.html';
+    };
+  </script>
+</body>
+</html>

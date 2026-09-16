@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Recruitment — Polinema Robotics 2024/2025</title>
+  <meta name="description"
+    content="Open Recruitment Polinema Robotics. Bergabunglah bersama divisi Aburobonema (KRAI), Aroc-PL (KRSBI), dan Robosarema (KRSRI)." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ─── Hero ─────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--primary-dim);
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      animation: pulse-glow 3s ease infinite;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: pulse 1.5s ease infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-desc {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 64px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-size: 2rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ─── Divisi Section ─────────────────────── */
+    .divisi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .divisi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .divisi-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .divisi-tag {
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+    }
+
+    /* ─── Timeline ───────────────────────────── */
+    .timeline {
+      position: relative;
+      padding: 0 0 0 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -33px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .timeline-step {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .timeline-desc {
+      font-size: 0.87rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── Section Headers ─────────────────────── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--primary);
+      background: var(--primary-dim);
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ─── CTA Section ─────────────────────────── */
+    .cta-section {
+      text-align: center;
+      padding: 80px 24px;
+      position: relative;
+    }
+
+    .cta-card {
+      background: linear-gradient(135deg, rgba(0, 200, 255, 0.08), rgba(139, 92, 246, 0.08));
+      border: 1px solid rgba(0, 200, 255, 0.2);
+      border-radius: var(--radius-2xl);
+      padding: 60px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(0, 200, 255, 0.15), transparent 60%);
+    }
+
+    .cta-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .cta-desc {
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    /* ─── Footer ─────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <a href="index.html" class="navbar-brand">
+      <div class="divisi">
+        <img src="assets/divisi/" alt="Logo Polinema R">
+      </div>
+      <div>
+        <div class="navbar-title">Polinema Robotics</div>
+        <div class="navbar-subtitle">Open Recruitment 2024/2025</div>
+      </div>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="#divisi">Divisi</a></li>
+      <li><a href="#alur">Alur Rekrutmen</a></li>
+      <li><a href="student/login.html">Cek Status</a></li>
+      <li><a href="register.html" class="btn btn-primary btn-sm">Daftar Sekarang</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="home" aria-label="Hero section">
+    <div style="max-width: 800px;">
+      <div class="hero-badge animate-fadeInUp">
+        Open Recruitment 2024/2025 — Pendaftaran Dibuka!
+      </div>
+      <h1 class="hero-title animate-fadeInUp animate-delay-1">
+        Bergabunglah<br>
+        <span class="text-gradient">Polinema Robotics</span>
+      </h1>
+      <p class="hero-desc animate-fadeInUp animate-delay-2">
+        Jadilah bagian dari tim robotika terbaik di Politeknik Negeri Malang.
+        Bangun robot, raih prestasi nasional, dan wujudkan inovasi bersama kami.
+      </p>
+      <div class="hero-actions animate-fadeInUp animate-delay-3">
+        <a href="register.html" class="btn btn-primary btn-lg" id="btn-daftar-hero">
+          Daftar Sekarang
+        </a>
+        <a href="#divisi" class="btn btn-ghost btn-lg" id="btn-lihat-divisi">
+          Lihat Divisi ↓
+        </a>
+      </div>
+      <div class="hero-stats animate-fadeInUp animate-delay-4">
+        <div class="hero-stat">
+          <div class="hero-stat-value">3</div>
+          <div class="hero-stat-label">Divisi Aktif</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value" id="stat-pendaftar">—</div>
+          <div class="hero-stat-label">Total Pendaftar</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">3</div>
+          <div class="hero-stat-label">Tahap Seleksi</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">🏆</div>
+          <div class="hero-stat-label">Kontes Nasional</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divisi Section -->
+  <section class="section" id="divisi" aria-label="Divisi section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Pilih Divisimu</span>
+        <h2 class="section-title">3 Divisi, 1 Misi</h2>
+        <p class="section-desc">Setiap divisi punya spesialisasi unik dalam dunia robotika kompetitif.</p>
+      </div>
+      <div class="divisi-grid">
+        <!-- KRAI -->
+        <a href="divisi/krai.html" class="divisi-card krai animate-fadeInUp animate-delay-1" id="card-krai" style="display:block; text-decoration:none; color:inherit;">
+          <div class="divisi-icon">
+            <img src="assets/divisi/krai.png" alt="Logo KRAI">
+          </div>
+          <div class="divisi-label">KRAI — Kontes Robot Abu Indonesia</div>
+          <div class="divisi-name">Aburobonema</div>
+          <div class="divisi-desc">
+            Tim Robot Polinema yang mengikuti kompetisi robot tingkat nasional antarpeserta didik perguruan tinggi di
+            Indonesia untuk mencari wakil ke ajang internasional ABU Robocon.
+          </div>
+          <div class="divisi-tags">
+            <span class="divisi-tag">Mechanical</span>
+            <span class="divisi-tag">Electrical</span>
+            <span class="divisi-tag">Programming</span>
+            <span class="divisi-tag">Management</span>
+          </div>
+          <div style="margin-top:16px; font-size:0.82rem; color:var(--krai-color); font-weight:600;">Lihat detail tim →</div>
+        </a>
+        <!-- KRSBI -->
+        <a href="divisi/krsbi.html" class="divisi-card krsbi animate-fadeInUp animate-delay-2" id="card-krsbi" style="display:block; text-decoration:none; color:inherit;">
+          <div class="divisi-icon">
+            <img src="assets/divisi/krsbi.png" alt="Logo KRSBI">
+          </div>
+          <div class="divisi-label">KRSBI-H — Robot Humanoid</div>
+          <div class="divisi-name">Aroc-PL</div>
+          <div class="divisi-desc">
+            Tim Robot Polinema di divisi Kontes Robot Sepak Bola Indonesia (KRSBI) yang mengembangkan robot berbentuk
+            manusia (dua kaki/bipedal) untuk bermain sepak bola secara mandiri (autonomous).
+          </div>
+          <div class="divisi-tags">
+            <span class="divisi-tag">Manuvering</span>
+            <span class="divisi-tag">Communication</span>
+            <span class="divisi-tag">Image Processing</span>
+            <span class="divisi-tag">Project Manager</span>
+          </div>
+          <div style="margin-top:16px; font-size:0.82rem; color:var(--krsbi-color); font-weight:600;">Lihat detail tim →</div>
+        </a>
+        <!-- KRSRI -->
+        <a href="divisi/krsri.html" class="divisi-card krsri animate-fadeInUp animate-delay-3" id="card-krsri" style="display:block; text-decoration:none; color:inherit;">
+          <div class="divisi-icon">
+            <img src="assets/divisi/krsri.png" alt="Logo KRSRI">
+          </div>
+          <div class="divisi-label">KRSRI — Robot SAR Indonesia</div>
+          <div class="divisi-name">Robosarema</div>
+          <div class="divisi-desc">
+            Tim Robot Polinema di divisi Kontes Robot SAR Indonesia (KRSRI) yang merancang robot berkaki otonom untuk
+            misi pencarian dan penyelamatan korban bencana.
+          </div>
+          <div class="divisi-tags">
+            <span class="divisi-tag">Mechanical</span>
+            <span class="divisi-tag">Electrical</span>
+            <span class="divisi-tag">Programming</span>
+            <span class="divisi-tag">Project Manager</span>
+          </div>
+          <div style="margin-top:16px; font-size:0.82rem; color:var(--krsri-color); font-weight:600;">Lihat detail tim →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alur Rekrutmen Section -->
+  <section class="section" id="alur" aria-label="Alur rekrutmen">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <div>
+          <div class="section-header" style="text-align: left; margin-bottom: 32px;">
+            <span class="section-label">Alur Seleksi</span>
+            <h2 class="section-title" style="text-align: left;">Proses Rekrutmen yang Transparan</h2>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-step">Tahap 01</div>
+              <div class="timeline-title">Pendaftaran Online</div>
+              <div class="timeline-desc">Isi formulir pendaftaran dengan data diri lengkap dan pilih 2 divisi yang
+                diminati. QR Code tersedia untuk akses mudah via smartphone.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-step">Tahap 02</div>
+              <div class="timeline-title">Tes Tulis</div>
+              <div class="timeline-desc">Tes pilihan ganda dan essay tentang pengetahuan dasar robotika, pemrograman,
+                dan elektronika.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-step">Tahap 03</div>
+              <div class="timeline-title">Wawancara</div>
+              <div class="timeline-desc">Diskusi langsung dengan anggota aktif. Eksplorasi motivasi, potensi, dan
+                kecocokan dengan divisi.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-step">Selesai</div>
+              <div class="timeline-title">Pengumuman</div>
+              <div class="timeline-desc">Hasil pengumuman beserta rekomendasi divisi disampaikan secara langsung dan
+                dapat dicek melalui website.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card card-glass" style="padding: 32px; text-align: center;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">Scan untuk Daftar</h3>
+            <p style="color: var(--text-secondary); font-size: 0.87rem; margin-bottom: 24px;">
+              Scan QR Code di bawah atau klik tombol untuk langsung ke halaman pendaftaran.
+            </p>
+            <div id="qr-hero"
+              style="display: flex; justify-content: center; margin-bottom: 20px; min-height: 200px; align-items: center; background: var(--bg-input); border-radius: var(--radius-lg); padding: 20px;">
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                QR Code akan tersedia<br>saat periode pendaftaran dibuka
+              </div>
+            </div>
+            <a href="register.html" class="btn btn-primary w-full" id="btn-daftar-qr">
+              Daftar Sekarang
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section" aria-label="Call to action">
+    <div class="cta-card">
+      <h2 class="cta-title">Siap Bergabung?</h2>
+      <p class="cta-desc">Jangan lewatkan kesempatan ini. Pendaftaran dibuka untuk mahasiswa Polinema aktif dari semua
+        program studi.</p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="register.html" class="btn btn-primary btn-lg" id="btn-daftar-cta">
+          Daftar Sekarang
+        </a>
+        <a href="student/login.html" class="btn btn-ghost btn-lg" id="btn-cek-status">
+          Cek Status Pendaftaran
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Polinema Robotics · Politeknik Negeri Malang</p>
+      <p style="margin-top: 4px;">
+        <a href="admin/login.html" style="color: var(--text-muted); text-decoration: none;">HUMAS PR</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script type="module">
+    // Set register URL
+    const regUrl = window.location.origin + window.location.pathname.replace('index.html', '') + 'register.html';
+    document.getElementById('reg-url').textContent = regUrl;
+
+    // Load stats from Firebase
+    import { getCollection } from './js/firebase-config.js';
+
+    async function loadStats() {
+      try {
+        const pendaftar = await getCollection('pendaftar');
+        document.getElementById('stat-pendaftar').textContent = pendaftar.length;
+      } catch {
+        document.getElementById('stat-pendaftar').textContent = '—';
+      }
+    }
+
+    loadStats();
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        target?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      navbar.style.borderBottomColor = window.scrollY > 50 ? 'rgba(0,200,255,0.15)' : 'var(--border)';
+    });
+  </script>
+</body>
+
+</html>

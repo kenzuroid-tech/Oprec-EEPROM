@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin — Polinema Robotics</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-logo">
+          <div class="sidebar-logo-icon">🤖</div>
+          <div>
+            <div class="sidebar-logo-text">Polinema Robotics</div>
+            <div class="sidebar-logo-sub">Admin Panel</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="sidebar-user-name" id="admin-name">Admin</div>
+          <div class="sidebar-user-role" id="admin-role">Super Admin</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Utama</div>
+        <a href="dashboard.html" class="sidebar-link active" id="link-dashboard">
+          <span class="sidebar-link-icon">📊</span> Dashboard
+        </a>
+        <a href="peserta.html" class="sidebar-link" id="link-peserta">
+          <span class="sidebar-link-icon">👥</span> Peserta
+          <span class="sidebar-badge" id="badge-pending">0</span>
+        </a>
+
+        <div class="sidebar-section-label">Rekrutmen</div>
+        <a href="soal.html" class="sidebar-link" id="link-soal">
+          <span class="sidebar-link-icon">✏️</span> Soal Tes
+        </a>
+        <a href="wawancara.html" class="sidebar-link" id="link-wawancara">
+          <span class="sidebar-link-icon">🎤</span> Wawancara
+        </a>
+
+        <div class="sidebar-section-label">Pengaturan</div>
+        <a href="anggota.html" class="sidebar-link" id="link-anggota">
+          <span class="sidebar-link-icon">⚙️</span> Akun Anggota
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="logout()" class="btn btn-ghost w-full btn-sm">🚪 Keluar</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div>
+          <div class="admin-header-title">Dashboard</div>
+          <div class="admin-header-subtitle">Overview rekrutmen terkini</div>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-primary btn-sm" id="btn-gen-qr" onclick="openQRModal()">
+            📱 Generate QR Code
+          </button>
+          <a href="../index.html" class="btn btn-ghost btn-sm" target="_blank">🌐 Lihat Website</a>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <!-- Stats Grid -->
+        <div class="grid-4" style="margin-bottom: 28px;" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--primary-dim);">📋</div>
+            <div>
+              <div class="stat-value text-gradient" id="stat-total">—</div>
+              <div class="stat-label">Total Pendaftar</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--warning-dim);">✏️</div>
+            <div>
+              <div class="stat-value" style="color: var(--warning);" id="stat-tes">—</div>
+              <div class="stat-label">Tes Tulis</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--secondary-dim);">🎤</div>
+            <div>
+              <div class="stat-value" style="color: var(--secondary);" id="stat-wawancara">—</div>
+              <div class="stat-label">Wawancara</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--success-dim);">✅</div>
+            <div>
+              <div class="stat-value" style="color: var(--success);" id="stat-diterima">—</div>
+              <div class="stat-label">Diterima</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divisi Stats -->
+        <div class="grid-3" style="margin-bottom: 28px;">
+          <div class="card krai" style="border-color: rgba(0,200,255,0.3);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <div style="font-size: 24px;">🤖</div>
+              <div>
+                <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--krai-color);">KRAI</div>
+                <div style="font-weight: 700;">Aburobonema</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 16px;">
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--krai-color);" id="krai-count">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Pendaftar</div>
+              </div>
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--success);" id="krai-diterima">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Diterima</div>
+              </div>
+            </div>
+          </div>
+          <div class="card krsbi" style="border-color: rgba(139,92,246,0.3);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <div style="font-size: 24px;">⚽</div>
+              <div>
+                <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--krsbi-color);">KRSBI</div>
+                <div style="font-weight: 700;">Aroc-PL</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 16px;">
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--krsbi-color);" id="krsbi-count">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Pendaftar</div>
+              </div>
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--success);" id="krsbi-diterima">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Diterima</div>
+              </div>
+            </div>
+          </div>
+          <div class="card krsri" style="border-color: rgba(16,185,129,0.3);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <div style="font-size: 24px;">🦾</div>
+              <div>
+                <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--krsri-color);">KRSRI</div>
+                <div style="font-weight: 700;">Robosarema</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 16px;">
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--krsri-color);" id="krsri-count">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Pendaftar</div>
+              </div>
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--success);" id="krsri-diterima">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Diterima</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Registrations -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <div>
+              <h3 style="font-weight: 700;">Pendaftar Terbaru</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary);">10 pendaftar terakhir</p>
+            </div>
+            <a href="peserta.html" class="btn btn-ghost btn-sm">Lihat Semua →</a>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>NIM</th>
+                  <th>Prodi</th>
+                  <th>Divisi Pilihan</th>
+                  <th>Status</th>
+                  <th>Waktu</th>
+                </tr>
+              </thead>
+              <tbody id="recent-tbody">
+                <tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 32px;">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- QR Modal -->
+  <div class="modal-overlay" id="modal-qr">
+    <div class="modal" style="max-width: 400px; text-align: center;">
+      <div class="modal-header">
+        <h3 class="modal-title">📱 QR Code Pendaftaran</h3>
+        <button class="modal-close" onclick="closeQRModal()">✕</button>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.87rem; margin-bottom: 20px;">
+        Bagikan QR Code ini agar mahasiswa baru bisa langsung scan dan mengisi formulir pendaftaran.
+      </p>
+      <div id="qr-container" style="background: white; padding: 20px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 16px;"></div>
+      <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-secondary); word-break: break-all; margin-bottom: 16px;" id="qr-url-display"></div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-ghost w-full" onclick="copyQRUrl()">📋 Salin Link</button>
+        <button class="btn btn-primary w-full" onclick="downloadQR()">⬇️ Download QR</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getCollection, onAdminAuthStateChanged, adminLogout } from '../js/firebase-config.js';
+    import { showToast, formatDateTime, getStatusLabel, copyToClipboard, generateQRCode } from '../js/utils.js';
+
+    // Auth guard
+    onAdminAuthStateChanged(user => {
+      if (!user) window.location.href = 'login.html';
+      else {
+        document.getElementById('admin-name').textContent = user.email?.split('@')[0] || 'Admin';
+        document.getElementById('admin-avatar').textContent = (user.email?.charAt(0) || 'A').toUpperCase();
+        loadDashboard();
+      }
+    });
+
+    async function loadDashboard() {
+      try {
+        const pendaftar = await getCollection('pendaftar', [], 'createdAt');
+
+        // Stats
+        const total = pendaftar.length;
+        const tes = pendaftar.filter(p => p.status === 'tes_tulis').length;
+        const wawancara = pendaftar.filter(p => p.status === 'wawancara').length;
+        const diterima = pendaftar.filter(p => p.status === 'diterima').length;
+
+        document.getElementById('stat-total').textContent = total;
+        document.getElementById('stat-tes').textContent = tes;
+        document.getElementById('stat-wawancara').textContent = wawancara;
+        document.getElementById('stat-diterima').textContent = diterima;
+        document.getElementById('badge-pending').textContent = wawancara;
+
+        // Divisi stats
+        const divisiCount = (name) => pendaftar.filter(p => p.divisiPilihan?.includes(name)).length;
+        const divisiDiterima = (name) => pendaftar.filter(p => p.status === 'diterima' && p.divisiPilihan?.includes(name)).length;
+
+        document.getElementById('krai-count').textContent = divisiCount('Aburobonema (KRAI)');
+        document.getElementById('krsbi-count').textContent = divisiCount('Aroc-PL (KRSBI)');
+        document.getElementById('krsri-count').textContent = divisiCount('Robosarema (KRSRI)');
+        document.getElementById('krai-diterima').textContent = divisiDiterima('Aburobonema (KRAI)');
+        document.getElementById('krsbi-diterima').textContent = divisiDiterima('Aroc-PL (KRSBI)');
+        document.getElementById('krsri-diterima').textContent = divisiDiterima('Robosarema (KRSRI)');
+
+        // Recent table
+        const recent = pendaftar.slice(0, 10);
+        const tbody = document.getElementById('recent-tbody');
+
+        if (recent.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 32px;">Belum ada pendaftar</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = recent.map(p => `
+          <tr>
+            <td><strong>${p.nama}</strong></td>
+            <td><span class="font-mono text-sm">${p.nim}</span></td>
+            <td style="color: var(--text-secondary); font-size: 0.85rem;">${p.prodi}</td>
+            <td>
+              <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                ${(p.divisiPilihan || []).map(d => `<span class="badge badge-muted text-xs">${d.split(' ')[0]}</span>`).join('')}
+              </div>
+            </td>
+            <td><span class="badge status-${p.status}">${getStatusLabel(p.status)}</span></td>
+            <td style="color: var(--text-secondary); font-size: 0.82rem;">${formatDateTime(p.createdAt)}</td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        showToast('Gagal memuat data: ' + err.message, 'error');
+      }
+    }
+
+    window.logout = async () => {
+      await adminLogout();
+      window.location.href = 'login.html';
+    };
+
+    // QR Code
+    window.openQRModal = function() {
+      const base = window.location.origin + window.location.pathname.replace('admin/dashboard.html', '');
+      const url = base + 'register.html';
+      document.getElementById('qr-url-display').textContent = url;
+      document.getElementById('qr-container').innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(document.getElementById('qr-container'), {
+          text: url, width: 200, height: 200,
+          colorDark: '#000000', colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+      document.getElementById('modal-qr').classList.add('active');
+    };
+
+    window.closeQRModal = () => document.getElementById('modal-qr').classList.remove('active');
+
+    window.copyQRUrl = async () => {
+      await copyToClipboard(document.getElementById('qr-url-display').textContent);
+    };
+
+    window.downloadQR = function() {
+      const canvas = document.querySelector('#qr-container canvas');
+      if (!canvas) return;
+      const a = document.createElement('a');
+      a.download = 'qrcode-oprec-polinema-robotics.png';
+      a.href = canvas.toDataURL();
+      a.click();
+    };
+  </script>
+</body>
+</html>

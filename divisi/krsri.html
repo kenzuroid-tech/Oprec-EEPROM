@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robosarema — KRSRI | Polinema Robotics</title>
+  <meta name="description" content="Tim Robosarema divisi KRSRI Polinema Robotics untuk Kontes Robot SAR Indonesia." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .divisi-hero {
+      min-height: 55vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 120px 0 60px;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .divisi-hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(16, 185, 129, 0.18) 0%, transparent 70%),
+        linear-gradient(180deg, transparent 50%, var(--bg-base) 100%);
+      z-index: 0;
+    }
+
+    .divisi-hero-bg-img {
+      position: absolute;
+      inset: 0;
+      background-image: url('../assets/divisi/krsri-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.12;
+      z-index: 0;
+    }
+
+    .divisi-hero-content { position: relative; z-index: 1; }
+
+    .divisi-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 18px;
+      border-radius: 100px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--krsri-color);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .divisi-hero-badge::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--krsri-color);
+      box-shadow: 0 0 10px var(--krsri-color);
+      animation: pulse-dot 2s ease infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .divisi-hero-watermark {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw;
+      max-width: none;
+      height: auto;
+      opacity: 0.5;
+      filter: blur(10px);
+      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .divisi-hero-title {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 16px;
+      color: var(--krsri-color);
+      text-shadow: 0 0 60px rgba(16, 185, 129, 0.3);
+    }
+
+    .divisi-hero-sub {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .divisi-hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+    .divisi-hero-stat { text-align: left; }
+
+    .divisi-hero-stat-val {
+      font-size: 1.8rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--krsri-color);
+      line-height: 1;
+    }
+
+    .divisi-hero-stat-lbl { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+    .section-label-krsri {
+      color: var(--krsri-color);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .prestasi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+    .prestasi-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 20px;
+      display: flex; gap: 16px; align-items: flex-start; transition: var(--transition);
+    }
+
+    .prestasi-card:hover { border-color: var(--krsri-color); background: rgba(16, 185, 129, 0.04); transform: translateY(-2px); }
+    .prestasi-icon { width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(16, 185, 129, 0.12); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .prestasi-info-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--krsri-color); margin-bottom: 4px; }
+    .prestasi-info-name { font-size: 0.92rem; font-weight: 700; margin-bottom: 2px; }
+    .prestasi-info-year { font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+    .org-chart { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .org-top { display: flex; flex-direction: column; align-items: center; }
+    .org-connector-v { width: 2px; height: 32px; background: linear-gradient(to bottom, var(--krsri-color), var(--border)); }
+    .org-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .org-branch { display: flex; flex-direction: column; align-items: center; }
+    .org-connector-branch { width: 2px; height: 24px; background: var(--border); }
+    .org-node { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 20px; text-align: center; min-width: 140px; transition: var(--transition); }
+    .org-node:hover { border-color: var(--krsri-color); background: rgba(16, 185, 129, 0.05); }
+    .org-node.head { border-color: var(--krsri-color); background: rgba(16, 185, 129, 0.08); min-width: 200px; }
+    .org-node-role { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--krsri-color); margin-bottom: 4px; }
+    .org-node-name { font-size: 0.88rem; font-weight: 700; }
+    .org-node-detail { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .org-section-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 4px 12px; border: 1px dashed var(--border); border-radius: 100px; margin: 20px 0 12px; }
+
+    .fokus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) { .fokus-grid { grid-template-columns: 1fr; } }
+
+    .fokus-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; transition: var(--transition); }
+    .fokus-card:hover { border-color: var(--krsri-color); transform: translateY(-2px); }
+    .fokus-icon { font-size: 28px; margin-bottom: 12px; }
+    .fokus-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .fokus-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .galeri-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto; gap: 12px; }
+    .galeri-item { border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4/3; background: var(--bg-card); border: 1px solid var(--border); position: relative; cursor: pointer; }
+    .galeri-item:first-child { grid-column: 1 / 3; grid-row: 1 / 2; aspect-ratio: 16/9; }
+    .galeri-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+    .galeri-item:hover img { transform: scale(1.05); }
+    .galeri-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); font-size: 0.8rem; }
+    .galeri-placeholder-icon { font-size: 32px; opacity: 0.4; }
+
+    .divisi-cta {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.05));
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: var(--radius-2xl);
+      padding: 48px;
+      text-align: center;
+    }
+
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.88rem; font-weight: 600; padding: 8px 0; transition: var(--transition); }
+    .back-link:hover { color: var(--krsri-color); }
+
+    @media (max-width: 768px) {
+      .galeri-grid { grid-template-columns: 1fr 1fr; }
+      .galeri-item:first-child { grid-column: 1 / 3; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1" style="background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);"></div>
+  <div class="bg-glow-2" style="background: radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%);"></div>
+
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <a href="../index.html" class="navbar-brand">
+      <div class="navbar-logo" style="background: linear-gradient(135deg, var(--krsri-color), #06b6d4);">
+        <img src="../assets/divisi/krsri.png" alt="Logo KRSRI" style="width:28px;height:28px;object-fit:contain;">
+      </div>
+      <div>
+        <div class="navbar-title">Polinema Robotics</div>
+        <div class="navbar-subtitle">Robosarema · KRSRI</div>
+      </div>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="#prestasi">Prestasi</a></li>
+      <li><a href="#struktur">Struktur Tim</a></li>
+      <li><a href="#fokus">Fokus</a></li>
+      <li><a href="#galeri">Galeri</a></li>
+      <li><a href="../register.html" class="btn btn-primary btn-sm" id="btn-daftar-nav-krsri"
+          style="background: linear-gradient(135deg, var(--krsri-color), #06b6d4);">Daftar Sekarang</a></li>
+    </ul>
+  </nav>
+
+  <section class="divisi-hero" id="home">
+    <div class="divisi-hero-bg"></div>
+    <div class="divisi-hero-bg-img"></div>
+    <img src="../assets/divisi/krsri.png" alt="" class="divisi-hero-watermark">
+    <div class="container divisi-hero-content">
+      <a href="../index.html#divisi" class="back-link">← Kembali ke Beranda</a>
+      <div class="divisi-hero-badge" style="margin-top: 60px;">KRSRI · Kontes Robot SAR Indonesia</div>
+      <h1 class="divisi-hero-title">ROBOSAREMA</h1>
+      <p class="divisi-hero-sub">
+        Tim Robot Polinema yang merancang robot berkaki otonom untuk misi <strong>pencarian dan penyelamatan
+        (Search and Rescue)</strong> korban bencana dalam Kontes Robot SAR Indonesia (KRSRI).
+      </p>
+      <div class="divisi-hero-stats">
+        <div class="divisi-hero-stat">
+          <div class="divisi-hero-stat-val">KRSRI</div>
+          <div class="divisi-hero-stat-lbl">Divisi Kompetisi</div>
+        </div>
+        <div class="divisi-hero-stat">
+          <div class="divisi-hero-stat-val">4</div>
+          <div class="divisi-hero-stat-lbl">Sub-divisi</div>
+        </div>
+        <div class="divisi-hero-stat">
+          <div class="divisi-hero-stat-val">KRI</div>
+          <div class="divisi-hero-stat-lbl">Ajang Nasional</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prestasi" aria-label="Prestasi Tim">
+    <div class="container">
+      <div class="section-header" style="text-align:left; margin-bottom:32px;">
+        <span class="section-label section-label-krsri">Prestasi Tim</span>
+        <h2 class="section-title" style="text-align:left;">Pencapaian Robosarema</h2>
+        <p class="section-desc" style="text-align:left; max-width:600px;">Rekam jejak prestasi tim dalam kompetisi robotika nasional.</p>
+      </div>
+      <div class="prestasi-grid">
+        <div class="prestasi-card">
+          <div class="prestasi-icon">🥇</div>
+          <div>
+            <div class="prestasi-info-label">Juara 1 Regional</div>
+            <div class="prestasi-info-name">KRSRI — KRI Regional</div>
+            <div class="prestasi-info-year">· Isi tahun & detail prestasi di sini</div>
+          </div>
+        </div>
+        <div class="prestasi-card">
+          <div class="prestasi-icon">🥈</div>
+          <div>
+            <div class="prestasi-info-label">Juara 2 Nasional</div>
+            <div class="prestasi-info-name">KRSRI — KRI Nasional</div>
+            <div class="prestasi-info-year">· Isi tahun & detail prestasi di sini</div>
+          </div>
+        </div>
+        <div class="prestasi-card">
+          <div class="prestasi-icon">🏅</div>
+          <div>
+            <div class="prestasi-info-label">Best Strategy</div>
+            <div class="prestasi-info-name">KRSRI Regional Jawa-Bali</div>
+            <div class="prestasi-info-year">· Isi tahun & detail prestasi di sini</div>
+          </div>
+        </div>
+        <div class="prestasi-card">
+          <div class="prestasi-icon">🏆</div>
+          <div>
+            <div class="prestasi-info-label">Finalis Nasional</div>
+            <div class="prestasi-info-name">Kontes Robot Indonesia — KRI</div>
+            <div class="prestasi-info-year">· Isi tahun & detail prestasi di sini</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="struktur" aria-label="Struktur Tim" style="background: rgba(16,185,129,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label section-label-krsri">Struktur Tim</span>
+        <h2 class="section-title">Kepengurusan Aktif</h2>
+        <p class="section-desc">Isi nama-nama anggota aktif sesuai posisi masing-masing.</p>
+      </div>
+      <div class="org-chart">
+        <div class="org-top">
+          <div class="org-node head">
+            <div class="org-node-role">Ketua Tim</div>
+            <div class="org-node-name">Nama Ketua</div>
+            <div class="org-node-detail">NIM · Angkatan 20XX</div>
+          </div>
+          <div class="org-connector-v"></div>
+        </div>
+        <div class="org-section-label">Divisi</div>
+        <div class="org-row">
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node"><div class="org-node-role">Mechanical</div><div class="org-node-name">Nama PIC</div><div class="org-node-detail">NIM · Angkatan 20XX</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node"><div class="org-node-role">Electrical</div><div class="org-node-name">Nama PIC</div><div class="org-node-detail">NIM · Angkatan 20XX</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node"><div class="org-node-role">Programming</div><div class="org-node-name">Nama PIC</div><div class="org-node-detail">NIM · Angkatan 20XX</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node"><div class="org-node-role">Project Manager</div><div class="org-node-name">Nama PIC</div><div class="org-node-detail">NIM · Angkatan 20XX</div></div></div>
+        </div>
+        <div class="org-section-label">Anggota</div>
+        <div class="org-row" style="max-width: 900px;">
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node" style="min-width:120px;"><div class="org-node-name">Nama Anggota</div><div class="org-node-detail">Mechanical</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node" style="min-width:120px;"><div class="org-node-name">Nama Anggota</div><div class="org-node-detail">Electrical</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node" style="min-width:120px;"><div class="org-node-name">Nama Anggota</div><div class="org-node-detail">Programming</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node" style="min-width:120px;"><div class="org-node-name">Nama Anggota</div><div class="org-node-detail">Project Manager</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node" style="min-width:120px;"><div class="org-node-name">Nama Anggota</div><div class="org-node-detail">Mechanical</div></div></div>
+          <div class="org-branch"><div class="org-connector-branch"></div><div class="org-node" style="min-width:120px;"><div class="org-node-name">Nama Anggota</div><div class="org-node-detail">Electrical</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fokus" aria-label="Fokus Pengembangan">
+    <div class="container">
+      <div class="section-header" style="text-align:left; margin-bottom:32px;">
+        <span class="section-label section-label-krsri">Fokus Pengembangan</span>
+        <h2 class="section-title" style="text-align:left;">Teknologi yang Kami Kembangkan</h2>
+        <p class="section-desc" style="text-align:left; max-width:600px;">Tim Robosarema berfokus pada empat pilar utama pengembangan robot SAR otonom.</p>
+      </div>
+      <div class="fokus-grid">
+        <div class="fokus-card">
+          <div class="fokus-icon">⚙️</div>
+          <div class="fokus-title">Mechanical Engineering</div>
+          <div class="fokus-desc">Perancangan dan fabrikasi rangka robot berkaki, sistem suspensi, dan mekanisme pengambilan objek yang mampu beroperasi di medan tidak rata layaknya area bencana nyata.</div>
+        </div>
+        <div class="fokus-card">
+          <div class="fokus-icon">⚡</div>
+          <div class="fokus-title">Electrical System</div>
+          <div class="fokus-desc">Desain rangkaian elektronik daya, integrasi sensor jarak, sensor pendeteksi korban, serta sistem manajemen daya baterai untuk operasi lapangan berdurasi panjang.</div>
+        </div>
+        <div class="fokus-card">
+          <div class="fokus-icon">💻</div>
+          <div class="fokus-title">Programming & Navigation</div>
+          <div class="fokus-desc">Pemrograman embedded, algoritma navigasi otonom di medan kompleks, sistem pemetaan real-time (SLAM), serta logika pengambilan keputusan dalam misi SAR.</div>
+        </div>
+        <div class="fokus-card">
+          <div class="fokus-icon">📋</div>
+          <div class="fokus-title">Project Management</div>
+          <div class="fokus-desc">Koordinasi timeline proyek, pengelolaan anggaran dan sumber daya tim, dokumentasi teknis, serta strategi kompetisi dan hubungan eksternal tim.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="galeri" aria-label="Galeri Kegiatan" style="background: rgba(16,185,129,0.02); border-top: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; text-align:left;">
+        <div>
+          <span class="section-label section-label-krsri">Galeri Kegiatan</span>
+          <h2 class="section-title" style="text-align:left; margin-top:8px;">Momen Bersama Tim</h2>
+          <p class="section-desc" style="text-align:left;">Foto kegiatan, latihan, dan kompetisi tim Robosarema.</p>
+        </div>
+      </div>
+      <div class="galeri-grid">
+        <div class="galeri-item"><div class="galeri-placeholder"><div class="galeri-placeholder-icon">🖼</div>Foto Utama Tim</div></div>
+        <div class="galeri-item"><div class="galeri-placeholder"><div class="galeri-placeholder-icon">🖼</div>Foto Kompetisi</div></div>
+        <div class="galeri-item"><div class="galeri-placeholder"><div class="galeri-placeholder-icon">🖼</div>Foto Latihan</div></div>
+        <div class="galeri-item"><div class="galeri-placeholder"><div class="galeri-placeholder-icon">🖼</div>Foto Workshop</div></div>
+        <div class="galeri-item"><div class="galeri-placeholder"><div class="galeri-placeholder-icon">🖼</div>Foto Piala</div></div>
+      </div>
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 16px; text-align: center;">
+        Ganti placeholder di atas dengan tag <code>&lt;img src="../assets/galeri/krsri/nama-foto.jpg"&gt;</code>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Daftar ke Robosarema">
+    <div class="container">
+      <div class="divisi-cta">
+        <img src="../assets/divisi/krsri.png" alt="Logo KRSRI" style="height:64px;object-fit:contain;margin-bottom:20px;">
+        <h2 style="font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin-bottom: 12px;">
+          Bergabung dengan <span style="color: var(--krsri-color);">Robosarema</span>
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 32px; line-height: 1.7;">
+          Jadilah bagian dari tim yang membangun robot untuk misi penyelamatan. Tidak diperlukan pengalaman sebelumnya — hanya semangat belajar dan kerja keras.
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="../register.html" class="btn btn-primary btn-lg" id="btn-daftar-krsri"
+            style="background: linear-gradient(135deg, var(--krsri-color), #06b6d4); box-shadow: 0 0 20px rgba(16,185,129,0.4);">
+            Daftar ke Divisi Ini
+          </a>
+          <a href="../index.html#divisi" class="btn btn-ghost btn-lg" id="btn-lihat-divisi-lain-krsri">
+            Lihat Divisi Lain
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Polinema Robotics · Politeknik Negeri Malang</p>
+      <p style="margin-top: 4px;">
+        <a href="../admin/login.html" style="color: var(--text-muted); text-decoration: none;">HUMAS PR</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      navbar.style.background = window.scrollY > 50
+        ? 'rgba(4, 4, 15, 0.95)'
+        : 'rgba(4, 4, 15, 0.7)';
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — Polinema Robotics</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(8, 8, 24, 0.9);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 40px;
+      backdrop-filter: blur(20px);
+    }
+
+    .login-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 30px var(--primary-glow);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="login-page">
+    <div class="login-card">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div class="login-icon">⚙️</div>
+        <h1 style="font-size: 1.5rem; font-weight: 800;">Admin Panel</h1>
+        <p style="color: var(--text-secondary); font-size: 0.87rem; margin-top: 4px;">Polinema Robotics — Open Recruitment</p>
+      </div>
+
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label class="form-label" for="admin-email">Email Admin</label>
+          <input type="email" id="admin-email" class="form-input" placeholder="admin@polinema.ac.id" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="admin-pass">Password</label>
+          <input type="password" id="admin-pass" class="form-input" placeholder="••••••••" required />
+        </div>
+        <div id="login-error" style="display:none; background: var(--error-dim); border: 1px solid var(--error); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 0.85rem; color: var(--error); margin-bottom: 16px;"></div>
+        <button type="submit" class="btn btn-primary w-full" id="btn-admin-login">
+          Masuk ke Admin Panel
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 0.82rem; color: var(--text-muted);">
+        <a href="../index.html" style="color: var(--text-muted); text-decoration: none;">← Kembali ke Website</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { adminLogin, onAdminAuthStateChanged } from '../js/firebase-config.js';
+    import { setButtonLoading, showToast } from '../js/utils.js';
+
+    // If already logged in, redirect
+    onAdminAuthStateChanged(user => {
+      if (user) window.location.href = 'dashboard.html';
+    });
+
+    document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value;
+      const pass = document.getElementById('admin-pass').value;
+      const btn = document.getElementById('btn-admin-login');
+      const errEl = document.getElementById('login-error');
+
+      setButtonLoading(btn, true);
+      errEl.style.display = 'none';
+
+      try {
+        await adminLogin(email, pass);
+        showToast('Login berhasil!', 'success');
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        let msg = 'Login gagal. Periksa email dan password.';
+        if (err.code === 'auth/user-not-found') msg = 'Email tidak terdaftar.';
+        if (err.code === 'auth/wrong-password') msg = 'Password salah.';
+        if (err.code === 'auth/too-many-requests') msg = 'Terlalu banyak percobaan. Coba lagi nanti.';
+        errEl.textContent = msg;
+        errEl.style.display = 'block';
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    });
+  </script>
+</body>
+</html>

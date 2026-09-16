@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seed Soal — Dev Tool</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #04040f; color: #e8f0fe; padding: 40px; }
+    button { background: #00c8ff; color: #000; border: none; padding: 14px 32px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; margin: 8px; }
+    button:hover { opacity: 0.85; }
+    #log { background: #0d0d24; border: 1px solid #222; border-radius: 8px; padding: 20px; margin-top: 20px; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; min-height: 200px; }
+    .ok { color: #10b981; } .err { color: #ef4444; } .info { color: #00c8ff; }
+  </style>
+</head>
+<body>
+  <h2>🛠️ Dev Tool — Seed Soal Tes</h2>
+  <p style="color:#8892b0;">Tool ini hanya untuk testing. Hapus file ini setelah selesai.</p>
+  <button onclick="seedSoal()">📝 Tambah Soal Contoh ke Firestore</button>
+  <button onclick="clearSoal()">🗑️ Hapus Semua Soal</button>
+  <button onclick="changeStatus()">⚡ Ubah Status Siti → tes_tulis</button>
+  <div id="log"><span class="info">> Siap. Klik tombol di atas.</span></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, updateDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbIi9m5MceuFf2Svp8SlBwE4U3FOolKsw",
+    authDomain: "oprec-polinema-robotics.firebaseapp.com",
+    projectId: "oprec-polinema-robotics",
+    storageBucket: "oprec-polinema-robotics.firebasestorage.app",
+    messagingSenderId: "923119834341",
+    appId: "1:923119834341:web:452b8a5a90b3d6de05300c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const log = (msg, cls = '') => {
+    const el = document.getElementById('log');
+    el.innerHTML += `\n<span class="${cls}">> ${msg}</span>`;
+    el.scrollTop = el.scrollHeight;
+  };
+
+  const SOAL = [
+    // ── Pilihan Ganda ──────────────────────────────────────────────
+    {
+      tipe: 'pilihan_ganda',
+      pertanyaan: 'Apa kepanjangan dari PWM dalam konteks kontrol motor?',
+      pilihan: {
+        A: 'Pulse Width Modulation',
+        B: 'Power Wave Management',
+        C: 'Programmable Width Module',
+        D: 'Phase Width Multiplexer'
+      },
+      jawabanBenar: 'A',
+      bobot: 10
+    },
+    {
+      tipe: 'pilihan_ganda',
+      pertanyaan: 'Protokol komunikasi serial mana yang paling umum digunakan antara mikrokontroler dan sensor?',
+      pilihan: {
+        A: 'USB 3.0',
+        B: 'I2C / SPI / UART',
+        C: 'Ethernet',
+        D: 'Bluetooth 5.0'
+      },
+      jawabanBenar: 'B',
+      bobot: 10
+    },
+    {
+      tipe: 'pilihan_ganda',
+      pertanyaan: 'Dalam pemrograman robot, apa fungsi dari PID controller?',
+      pilihan: {
+        A: 'Mengatur tampilan layar LCD',
+        B: 'Mengelola memori mikrokontroler',
+        C: 'Mengontrol output agar mendekati setpoint secara otomatis',
+        D: 'Mengatur komunikasi WiFi'
+      },
+      jawabanBenar: 'C',
+      bobot: 10
+    },
+    {
+      tipe: 'pilihan_ganda',
+      pertanyaan: 'Sensor apa yang paling tepat digunakan untuk mendeteksi jarak objek pada robot beroda?',
+      pilihan: {
+        A: 'Sensor suhu DHT22',
+        B: 'Sensor ultrasonic HC-SR04 atau LiDAR',
+        C: 'Sensor accelerometer MPU6050',
+        D: 'Sensor cahaya LDR'
+      },
+      jawabanBenar: 'B',
+      bobot: 10
+    },
+    {
+      tipe: 'pilihan_ganda',
+      pertanyaan: 'Bahasa pemrograman mana yang paling umum digunakan dalam pengembangan robot dengan ROS (Robot Operating System)?',
+      pilihan: {
+        A: 'Java dan Kotlin',
+        B: 'PHP dan JavaScript',
+        C: 'C++ dan Python',
+        D: 'Swift dan Rust'
+      },
+      jawabanBenar: 'C',
+      bobot: 10
+    },
+    // ── Essay ──────────────────────────────────────────────────────
+    {
+      tipe: 'essay',
+      pertanyaan: 'Jelaskan apa yang kamu ketahui tentang sistem navigasi otonom pada robot beroda. Sebutkan minimal 2 komponen atau algoritma yang diperlukan dan jelaskan fungsinya masing-masing!',
+      kriteria: 'Jawaban yang baik harus: (1) Menjelaskan konsep navigasi otonom secara umum, (2) Menyebutkan minimal 2 dari komponen berikut: sensor (LiDAR, kamera, ultrasonic, encoder), algoritma pathfinding (A*, Dijkstra, DWA), SLAM, odometri, atau sensor fusion, (3) Menjelaskan fungsi masing-masing komponen yang disebutkan, (4) Bonus jika menyebutkan contoh implementasi nyata.',
+      bobot: 25
+    },
+    {
+      tipe: 'essay',
+      pertanyaan: 'Mengapa kamu tertarik bergabung di Polinema Robotics, dan kontribusi apa yang bisa kamu berikan untuk tim? Ceritakan juga pengalaman atau skill yang relevan yang kamu miliki!',
+      kriteria: 'Jawaban yang baik harus: (1) Menunjukkan motivasi yang jelas dan tulus untuk bergabung di UKM Robotics, (2) Menyebutkan minimal 1 skill atau pengalaman yang relevan (pemrograman, elektronika, desain, dll), (3) Menjelaskan kontribusi spesifik yang bisa diberikan, (4) Menunjukkan semangat belajar dan kerja tim. Poin dikurangi jika jawaban terlalu generik tanpa detail spesifik.',
+      bobot: 25
+    }
+  ];
+
+  window.seedSoal = async function() {
+    log('Mulai menambahkan soal...', 'info');
+    try {
+      for (let i = 0; i < SOAL.length; i++) {
+        await addDoc(collection(db, 'soal_tes'), { ...SOAL[i], createdAt: serverTimestamp() });
+        log(`✅ Soal ${i+1} ditambahkan: ${SOAL[i].pertanyaan.slice(0, 50)}...`, 'ok');
+      }
+      log(`\n🎉 ${SOAL.length} soal berhasil ditambahkan! Sekarang ubah status peserta ke tes_tulis.`, 'ok');
+    } catch(err) {
+      log('❌ Error: ' + err.message, 'err');
+    }
+  };
+
+  window.clearSoal = async function() {
+    log('Menghapus semua soal...', 'info');
+    try {
+      const snap = await getDocs(collection(db, 'soal_tes'));
+      for (const d of snap.docs) await deleteDoc(doc(db, 'soal_tes', d.id));
+      log(`✅ ${snap.size} soal dihapus.`, 'ok');
+    } catch(err) {
+      log('❌ Error: ' + err.message, 'err');
+    }
+  };
+
+  window.changeStatus = async function() {
+    log('Mengambil semua peserta untuk diubah statusnya...', 'info');
+    try {
+      const q = query(collection(db, 'pendaftar'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        log('Tidak ada peserta terdaftar di database.', 'err');
+        return;
+      }
+      for (const d of snap.docs) {
+        await updateDoc(doc(db, 'pendaftar', d.id), { status: 'tes_tulis' });
+        log(`✅ Status ${d.data().nama} (${d.data().nim}) → tes_tulis`, 'ok');
+      }
+      log('\n🎉 Semua status peserta berhasil diubah! Silakan login dengan akun mana saja di student/login.html.', 'ok');
+    } catch(err) {
+      log('❌ Error: ' + err.message, 'err');
+    }
+  };
+</script>
+</body>
+</html>

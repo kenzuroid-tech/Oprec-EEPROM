@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Anggota — Admin Polinema Robotics</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+
+  <div class="admin-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-logo">
+          <div class="sidebar-logo-icon">🤖</div>
+          <div><div class="sidebar-logo-text">Polinema Robotics</div><div class="sidebar-logo-sub">Admin Panel</div></div>
+        </a>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="admin-avatar">A</div>
+        <div><div class="sidebar-user-name" id="admin-name">Admin</div><div class="sidebar-user-role">Admin</div></div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Utama</div>
+        <a href="dashboard.html" class="sidebar-link"><span class="sidebar-link-icon">📊</span> Dashboard</a>
+        <a href="peserta.html" class="sidebar-link"><span class="sidebar-link-icon">👥</span> Peserta</a>
+        <div class="sidebar-section-label">Rekrutmen</div>
+        <a href="soal.html" class="sidebar-link"><span class="sidebar-link-icon">✏️</span> Soal Tes</a>
+        <a href="wawancara.html" class="sidebar-link"><span class="sidebar-link-icon">🎤</span> Wawancara</a>
+        <div class="sidebar-section-label">Pengaturan</div>
+        <a href="anggota.html" class="sidebar-link active"><span class="sidebar-link-icon">⚙️</span> Akun Anggota</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button onclick="logout()" class="btn btn-ghost w-full btn-sm">🚪 Keluar</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <div>
+          <div class="admin-header-title">Manajemen Akun Anggota</div>
+          <div class="admin-header-subtitle">Tambah dan kelola akun admin untuk setiap divisi</div>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-primary" onclick="openAddModal()">+ Tambah Akun</button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <!-- Info -->
+        <div style="background: var(--warning-dim); border: 1px solid var(--warning); border-radius: var(--radius-lg); padding: 14px 20px; margin-bottom: 24px; font-size: 0.87rem; display: flex; gap: 12px; align-items: flex-start;">
+          <span style="font-size: 18px; margin-top: 2px;">⚠️</span>
+          <div>
+            <strong>Penting:</strong> Akun admin menggunakan Firebase Authentication. Setelah membuat akun, bagikan email & password ke anggota yang bersangkutan. Password bisa diubah melalui Firebase Console atau fitur reset password.
+          </div>
+        </div>
+
+        <!-- Akun List -->
+        <div id="akun-list">
+          <div style="text-align: center; padding: 48px; color: var(--text-muted);">Memuat data...</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Akun Modal -->
+  <div class="modal-overlay" id="modal-akun">
+    <div class="modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Tambah Akun Anggota</h3>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
+      </div>
+      <div style="background: var(--primary-dim); border: 1px solid rgba(0,200,255,0.3); border-radius: var(--radius-md); padding: 12px 16px; font-size: 0.82rem; color: var(--primary); margin-bottom: 20px;">
+        ℹ️ Akun akan dibuat di Firebase Authentication. Pastikan email valid dan mudah diingat.
+      </div>
+      <form id="akun-form">
+        <div class="form-group">
+          <label class="form-label" for="akun-nama">Nama Anggota *</label>
+          <input type="text" id="akun-nama" class="form-input" placeholder="Nama lengkap anggota" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="akun-email">Email *</label>
+          <input type="email" id="akun-email" class="form-input" placeholder="nama@polinema.ac.id" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="akun-password">Password Awal *</label>
+          <input type="text" id="akun-password" class="form-input" placeholder="Min. 6 karakter" required minlength="6" />
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Password ini akan dikasih ke anggota untuk login pertama kali.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="akun-divisi">Divisi *</label>
+          <select id="akun-divisi" class="form-select" required>
+            <option value="" disabled selected>Pilih divisi...</option>
+            <option value="Aburobonema (KRAI)">Aburobonema (KRAI)</option>
+            <option value="Aroc-PL (KRSBI)">Aroc-PL (KRSBI)</option>
+            <option value="Robosarema (KRSRI)">Robosarema (KRSRI)</option>
+            <option value="Super Admin">Super Admin (Semua Akses)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="akun-role">Role *</label>
+          <select id="akun-role" class="form-select" required>
+            <option value="interviewer">Interviewer (Akses Wawancara)</option>
+            <option value="admin">Admin (Akses Penuh)</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 8px;">
+          <button type="button" class="btn btn-ghost w-full" onclick="closeAddModal()">Batal</button>
+          <button type="submit" class="btn btn-primary w-full" id="btn-save-akun">Buat Akun</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createAdminUser, onAdminAuthStateChanged, adminLogout, getCollection, setDocument, deleteDocument } from '../js/firebase-config.js';
+    import { showToast, setButtonLoading, formatDate } from '../js/utils.js';
+
+    let allAkun = [];
+
+    onAdminAuthStateChanged(user => {
+      if (!user) window.location.href = 'login.html';
+      else {
+        document.getElementById('admin-name').textContent = user.email?.split('@')[0] || 'Admin';
+        document.getElementById('admin-avatar').textContent = (user.email?.charAt(0) || 'A').toUpperCase();
+        loadAkun();
+      }
+    });
+
+    async function loadAkun() {
+      try {
+        allAkun = await getCollection('admin_users', [], 'createdAt');
+        renderAkun();
+      } catch (err) {
+        showToast('Gagal memuat: ' + err.message, 'error');
+      }
+    }
+
+    const divisiColors = {
+      'Aburobonema (KRAI)': 'krai',
+      'Aroc-PL (KRSBI)': 'krsbi',
+      'Robosarema (KRSRI)': 'krsri',
+      'Super Admin': 'primary'
+    };
+
+    function renderAkun() {
+      const el = document.getElementById('akun-list');
+
+      if (!allAkun.length) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👤</div><div class="empty-state-title">Belum ada akun anggota</div><div class="empty-state-desc">Klik "Tambah Akun" untuk membuat akun admin pertama.</div></div>`;
+        return;
+      }
+
+      // Group by divisi
+      const grouped = {};
+      allAkun.forEach(a => {
+        if (!grouped[a.divisi]) grouped[a.divisi] = [];
+        grouped[a.divisi].push(a);
+      });
+
+      el.innerHTML = Object.entries(grouped).map(([divisi, anggota]) => `
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 12px;">${divisi}</div>
+          <div class="grid-3">
+            ${anggota.map(a => `
+              <div class="card" style="position: relative;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #000; flex-shrink: 0;">
+                    ${a.nama?.charAt(0)?.toUpperCase()}
+                  </div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.95rem;">${a.nama}</div>
+                    <div style="font-size: 0.78rem; color: var(--text-secondary);">${a.email}</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+                  <span class="badge badge-primary">${a.role === 'admin' ? '🔑 Admin' : '🎤 Interviewer'}</span>
+                  <span class="badge badge-muted">${formatDate(a.createdAt)}</span>
+                </div>
+                <button class="btn btn-danger btn-sm w-full" onclick="deleteAkun('${a.id}', '${a.nama}')">
+                  🗑️ Hapus Akun
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.openAddModal = () => {
+      document.getElementById('akun-form').reset();
+      document.getElementById('modal-akun').classList.add('active');
+    };
+
+    window.closeAddModal = () => document.getElementById('modal-akun').classList.remove('active');
+
+    document.getElementById('akun-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-akun');
+      setButtonLoading(btn, true);
+
+      try {
+        const email = document.getElementById('akun-email').value;
+        const password = document.getElementById('akun-password').value;
+        const nama = document.getElementById('akun-nama').value.trim();
+        const divisi = document.getElementById('akun-divisi').value;
+        const role = document.getElementById('akun-role').value;
+
+        // Create Firebase Auth user
+        const userCred = await createAdminUser(email, password);
+        const uid = userCred.user.uid;
+
+        // Save to Firestore
+        await setDocument('admin_users', uid, { nama, email, divisi, role }, false);
+
+        showToast(`Akun ${nama} berhasil dibuat!`, 'success');
+        closeAddModal();
+        await loadAkun();
+
+      } catch (err) {
+        let msg = err.message;
+        if (err.code === 'auth/email-already-in-use') msg = 'Email sudah digunakan.';
+        if (err.code === 'auth/weak-password') msg = 'Password minimal 6 karakter.';
+        showToast('Gagal: ' + msg, 'error');
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    });
+
+    window.deleteAkun = async function(id, nama) {
+      if (!confirm(`Hapus akun ${nama}? Akun Firebase Auth perlu dihapus manual di Firebase Console.`)) return;
+      try {
+        await deleteDocument('admin_users', id);
+        showToast(`Akun ${nama} dihapus dari database. Hapus juga dari Firebase Console > Authentication.`, 'warning', 6000);
+        await loadAkun();
+      } catch (err) {
+        showToast('Gagal menghapus: ' + err.message, 'error');
+      }
+    };
+
+    window.logout = async () => {
+      await adminLogout();
+      window.location.href = 'login.html';
+    };
+  </script>
+</body>
+</html>

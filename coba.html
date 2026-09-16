@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polinema Robotics - Aburobonema</title>
+
+    <!-- Import Font Iceberg dari Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Iceberg', cursive, sans-serif;
+        }
+
+        body {
+            background-image:
+                linear-gradient(180deg, rgba(11, 17, 32, 0.95) 0%, rgba(23, 32, 59, 0.85) 50%, rgba(10, 15, 29, 0.98) 100%),
+                url('assets/divisi/krai.png');
+            
+            background-size: cover, 900px; 
+            
+            background-position: center, center 15%; 
+            
+            background-repeat: no-repeat, no-repeat;
+            background-attachment: fixed, fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Navbar --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background-color: transparent;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Mengatur ukuran gambar logo di dalam header */
+        .logo-section img {
+            height: 55px;
+            /* Kamu bisa atur angka ini (misal 40px - 60px) sampai ukurannya pas */
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Placeholder untuk logo kiri atas */
+        .logo-placeholder {
+            display: flex;
+            flex-direction: column;
+            color: #fca311;
+            font-weight: bold;
+            font-size: 20px;
+            font-style: italic;
+            line-height: 1;
+        }
+
+        .logo-placeholder span {
+            color: white;
+            font-size: 10px;
+        }
+
+        .logo-text h1 {
+            font-size: 18px;
+            letter-spacing: 1px;
+            font-weight: normal;
+        }
+
+        .logo-text p {
+            font-size: 10px;
+            color: #b0b0b0;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 35px;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #d1d1d1;
+        }
+
+        .btn-daftar {
+            background-color: #ffffff;
+            color: #0b1120;
+            padding: 8px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-daftar:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* --- Hero Section --- */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .badge {
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 6px 24px;
+            border-radius: 30px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+
+        .main-title {
+            font-size: 72px;
+            letter-spacing: 6px;
+            margin-bottom: 25px;
+            /* Membuat efek outline teks tembus pandang */
+            color: transparent;
+            -webkit-text-stroke: 1.5px #ffffff;
+        }
+
+        .description {
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #e0e0e0;
+        }
+
+        /* --- Stats / Features --- */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-title {
+            font-size: 32px;
+            letter-spacing: 3px;
+            color: transparent;
+            -webkit-text-stroke: 1px #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .stat-subtitle {
+            font-size: 13px;
+            color: #b0b0b0;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Area Navigasi Atas -->
+    <header>
+        <div class="logo-section">
+            <!-- Ganti div ini dengan tag <img> jika kamu sudah memiliki file logo aslinya -->
+            <div class="logo-placeholder">
+                <img src="assets/divisi/krai.png" alt="Logo KRAI">
+            </div>
+            <div class="logo-text">
+                <h1>Polinema Robotics</h1>
+                <p>KRAI - Aburobonema</p>
+            </div>
+        </div>
+        <nav>
+            <a href="#">Prestasi</a>
+            <a href="#">Struktur Tim</a>
+            <a href="#">Fokus</a>
+            <a href="#">Galeri</a>
+            <a href="#" class="btn-daftar">Daftar Sekarang</a>
+        </nav>
+    </header>
+
+    <!-- Konten Utama Halaman -->
+    <main>
+        <div class="hero-content">
+            <div class="badge">KRAI - KONTES ROBOT ABU INDONESIA</div>
+
+            <h2 class="main-title">ABUROBONEMA</h2>
+
+            <p class="description">
+                Tim Robot Polinema yang mengikuti kompetisi robot tingkat nasional antarpeserta didik perguruan tinggi
+                di Indonesia, bersaing untuk mewakili bangsa di ajang internasional ABU Robocon.
+            </p>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-title">KRAI</div>
+                    <div class="stat-subtitle">Divisi Kompetisi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">4</div>
+                    <div class="stat-subtitle">Sub Divisi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">Aburobocon</div>
+                    <div class="stat-subtitle">Ajang Internasional</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>
